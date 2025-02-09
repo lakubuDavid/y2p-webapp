@@ -11,8 +11,8 @@ const localCredentials = reactive(
   }),
 );
 
-const API_URL : string = import.meta.env.VITE_API_URL ;
-
+// const API_URL = import.meta.env.VITE_API_URL ;
+const API_URL = "https://api.y2p.lakubudavid.me/api"
 export const useAuth = () => {
   const getAuthHeader = () => {
     console.log(localCredentials);
@@ -27,7 +27,9 @@ export const useAuth = () => {
     login: async (email: string, password: string) => {
       try {
         console.log(email, password);
-        const response = await fetch(`${API_URL}/auth/login`, {
+        const url = `${API_URL}/auth/login`
+        console.log(url)
+        const response = await fetch(url, {
           method: "POST",
           body: JSON.stringify({
             email: email,
@@ -37,17 +39,16 @@ export const useAuth = () => {
             "Content-Type": "application/json",
             ...getAuthHeader(),
           },
+          mode:"cors"
         });
         const credentials = (await response.json()) as UserCredentials & {
           status: string;
           message:string;
         };
-        console.log(credentials);
         if (credentials.status == "ok") {
           console.log("ok");
           localCredentials.value = credentials;
         }
-        console.log(credentials);
         return credentials;
       } catch (err) {
         console.log("[Error : Auth]", err);
@@ -56,7 +57,9 @@ export const useAuth = () => {
     signUp: async (name:string,email: string, password: string) => {
       try {
         console.log(email, password);
-        const response = await fetch(`${API_URL}/auth/signup`, {
+        const url = `${API_URL}/auth/signup`
+        console.log(url)
+        const response = await fetch(url, {
           method: "POST",
           body: JSON.stringify({
             name:name,
@@ -66,6 +69,7 @@ export const useAuth = () => {
           headers: {
             "Content-Type": "application/json"
           },
+          mode:"cors"
         });
         const credentials = (await response.json()) as UserCredentials & {
           status: string;
