@@ -9,4 +9,4 @@ cwd = "."
 [observability.logs]
 enabled = true
 [vars]
-VITE_API_URL = "http://localhost:8787/api"
+VITE_API_URL = "https://api.y2p.lakubudavid.me/api"
