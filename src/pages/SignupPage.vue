@@ -26,7 +26,15 @@ const submit = async (ev: Event) => {
     form.value.password,
   );
   if (response?.status == "ok") await router.push("/");
-  else alert(response?.message);
+  else {
+    let errorMessage = response?.message ?? "";
+    if (response?.error?.issues) {
+      response.error.issues.forEach((err: any) => {
+        errorMessage += `${err.message}, \n`;
+      });
+    }
+    alert(`${errorMessage}`);
+  }
 };
 </script>
 <template>

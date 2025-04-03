@@ -38,21 +38,20 @@ console.log(route.name);
     display: flex;
   }
   .__section-1 {
-    &.login {
-      background-color: coral;
-    }
-    &.signup {
-      background-color: cornflowerblue;
-    }
-    &.check_reservation {
-      background-color: cadetblue;
-    }
+    /*&.login {*/
+    /*  background-color: coral;*/
+    /*}*/
+    /*&.signup {*/
+    /*  background-color: cornflowerblue;*/
+    /*}*/
+    /*&.check_reservation {*/
+    /*  background-color: cadetblue;*/
+    /*}*/
     a {
       color: antiquewhite;
     }
     background: gray;
     color: #ffffff;
-    font-weight: 600;
     font-size: 2ch;
     border-left: 1px solid #0003;
   }

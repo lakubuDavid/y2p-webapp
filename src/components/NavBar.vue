@@ -6,19 +6,10 @@
           <RouterLink to="/">Home </RouterLink>
         </li>
         <li>
-          <RouterLink to="/login">Login </RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/signup">Sign Up</RouterLink>
-        </li>
-        <li>
           <RouterLink to="/check_reservation">Check reservation</RouterLink>
         </li>
         <li>
-          <RouterLink to="/reservation">Make Reservation</RouterLink>
-        </li>
-        <li>
-          <RouterLink to="/staff/account">Staff Account</RouterLink>
+          <RouterLink to="/staff/account">Staff Section</RouterLink>
         </li>
       </ul>
     </nav>
@@ -32,6 +23,7 @@
   width: 100dvw;
   position: absolute;
   top: 5px;
+  z-index: 1000;
   nav {
     border-radius: 50px;
     background-color: #fed;

@@ -1,13 +1,12 @@
 :root {
   font-family: Poppins, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  /*  line-height: 1.5;*/
   font-weight: 400;
   font-size: 1.1em;
 
   /* color-scheme: light dark; */
   /* color: rgba(255, 255, 255, 0.87); */
-  background-color: #ffd;
-
+  /*  background-color: #ffffef;*/
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,11 +14,10 @@
 }
 
 a {
-  font-weight: 500;
   /* color: #646cff; */
   color: #664422;
   text-decoration: none;
-  -webkit-text-stroke: 1px;
+  /*-webkit-text-stroke: 1px;*/
 }
 
 a:hover {
@@ -34,26 +32,32 @@ a:hover {
   padding: 5px 10px;
 }
 
+.inline-form-group {
+  display: flex;
+  padding: 5px 10px;
+  gap: 5px;
+}
+
 form {
-  border-left: 1px solid #0003;
-  padding: 80px 40px;
+  /* border-left: 1px solid #0003; */
+  padding: 20px 40px;
 }
 
 label {
 
-  -webkit-text-stroke: 1px;
+  /*  -webkit-text-stroke: 1px;*/
 }
 
 input,
 select {
   font: inherit;
-  -webkit-text-stroke: 0.5px;
+  /*  -webkit-text-stroke: 0.5px;*/
 
   border: none;
   background-color: #ffffff00;
   border-bottom: 1px solid #0002;
-  width: 300px;
-  height: 25px;
+  /* width: 300px; */
+  /* height: 30px; */
 
   &[type="text"],
   &[type="password"],
@@ -62,13 +66,15 @@ select {
     border: none;
     background-color: #ffffff00;
     border-bottom: 1px solid #0002;
-    width: 300px;
-    height: 25px;
+    border-radius: 0px;
+    /* padding: 5px; */
+    /* width: 300px; */
+    /* height: 25px; */
 
   }
 
   &:focus {
-    border-width: 2px;
+    /* border-width: 2px; */
     outline: none;
   }
 }
@@ -82,17 +88,18 @@ body {
   /* max-height: 100dvh; */
   inset: 0;
   height: 100%;
-  font-family: "Poiret One", Verdana, Geneva, Tahoma, sans-serif;
+  font-family: "Albert Sans";
   /* -webkit-text-stroke: 1px; */
   color: #321;
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 3em;
   line-height: 1.1;
 }
 
-button {
+button,
+.btn {
   display: flex;
   flex-direction: row;
   place-items: center;
@@ -102,12 +109,10 @@ button {
   border: 1px solid #0003;
   padding: 0.3em 1.2em;
   font-size: 1em;
-  font-weight: 500;
-  -webkit-text-stroke: 1px;
   font-family: inherit;
   background-color: #fdfdfd;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 50ms;
   width: fit-content;
 
   &.transparent {
@@ -122,13 +127,26 @@ button {
   &.success {
     background: #2e6;
   }
+
+  &.disabled {
+
+    background: #eee;
+    color: #666;
+  }
+
+  &.invisible {
+    opacity: 0;
+  }
 }
 
-button:hover {
+button:hover,
+btn:hover {
   border-color: #0005;
 }
 
+.btn:focus,
 button:focus,
+.btn:focus-visible,
 button:focus-visible {
   /* outline: 4px auto -webkit-focus-ring-color; */
   outline: none;
@@ -167,4 +185,26 @@ button:focus-visible {
 
 .flex {
   display: flex;
+}
+
+.pad-5 {
+  padding: 5px
+}
+
+.pad-10 {
+  padding: 10px
+}
+
+.pad-15 {
+  padding: 15px
+}
+
+.pad-20 {
+  padding: 20px
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
 }

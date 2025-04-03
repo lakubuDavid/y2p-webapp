@@ -4,9 +4,17 @@ import { useAuth } from "../states/auth";
 import Dropdown from "./Dropdown.vue";
 import DropdownItem from "./DropdownItem.vue";
 import { useRouter } from "vue-router";
+import { useCookies } from "@vueuse/integrations/useCookies";
+import { useUserStore } from "../stores/user";
+import { storeToRefs } from "pinia";
 
 const auth = useAuth();
-const { user } = auth.credentials.value;
+//const { user } = auth.credentials.value;
+const store = useUserStore();
+const { user } = storeToRefs(store);
+
+store.refresh();
+
 const showDropdown = ref(false);
 
 const router = useRouter();
@@ -14,11 +22,17 @@ const router = useRouter();
 const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
-
+const myAccountClick = () => {
+  const cookies = useCookies(["__token", "__refresh_token"]);
+  console.log(cookies.get("__token"));
+  console.log(cookies.get("__refresh_token"));
+};
 const signOutClick = async () => {
-  await auth.signOut();
+  const response = await auth.signOut();
   //  router.push(router.currentRoute.value.path);
-  router.go(0);
+  if (response?.ok) {
+    router.go(0);
+  }
 };
 const loginClick = async () => {
   await router.push("/login");
@@ -34,7 +48,7 @@ const signUpClick = async () => {
     </div>
     <Dropdown :isShown="showDropdown">
       <template v-if="user">
-        <DropdownItem>My Account</DropdownItem>
+        <DropdownItem @click="myAccountClick">My Account</DropdownItem>
         <hr />
         <DropdownItem @click="() => signOutClick()">Sign Out</DropdownItem>
       </template>
@@ -51,6 +65,7 @@ const signUpClick = async () => {
   right: 10px;
   top: 15px;
   display: flex;
+  z-index: 1010;
   flex-direction: column;
   gap: 5px;
   .trigger {

@@ -8,7 +8,7 @@ const emit = defineEmits(["click"]);
 </template>
 <style scoped>
 .dropdown-item {
-  -webkit-text-stroke: 0.5px;
+  /*  -webkit-text-stroke: 0.5px;*/
   cursor: pointer;
 }
 </style>

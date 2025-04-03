@@ -13,10 +13,10 @@ import Sidebar from "../components/Sidebar.vue";
 <style scoped>
 .__main-view {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 250px 1fr;
   .__subview {
     border: 4px solid #0001;
-    padding: 4rem;
+    padding: 2rem;
   }
   height: 100%;
 }

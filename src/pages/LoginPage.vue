@@ -2,14 +2,25 @@
 import { useRouter } from "vue-router";
 import Layout from "../layouts/accessform.vue";
 import { useAuth } from "../states/auth";
+import { useToast } from "primevue/usetoast";
 
-const form = defineModel("form", { default: { email: "", password: "" } });
+const toast = useToast();
+
+const form = defineModel<{ email: string; password: string }>("form", {
+  default: { email: "", password: "" },
+});
 const router = useRouter();
 const submit = async (ev: Event) => {
   ev.preventDefault();
-  const response = await useAuth().login(form.value.email, form.value.password);
-  if (response?.status == "ok") await router.push("/");
-  else alert(response?.message);
+  const { error } = await useAuth().login(
+    form.value?.email ?? "",
+    form.value?.password ?? "",
+  );
+  if (error) {
+    toast.add({ severity: "danger", summary: error });
+  } else {
+    await router.push("/");
+  }
 };
 </script>
 <template>
@@ -17,19 +28,15 @@ const submit = async (ev: Event) => {
     <div>
       <form @submit="submit">
         <div class="form-group">
-          <label for="i-email"> Email </label>
-          <input
-            type="email"
-            name="i-email"
-            id="i-email"
-            v-model="form.email"
-          />
+          <label for="email" autocomplete> Email </label>
+          <input type="email" name="email" id="i-email" v-model="form.email" />
         </div>
         <div class="form-group">
-          <label for="i-password"> Password </label>
+          <label for="password" autocomplete> Password </label>
+
           <input
             type="password"
-            name="i-password"
+            name="password"
             id="i-password"
             v-model="form.password"
           />

@@ -13,6 +13,22 @@
       "@shared/*": [
         "../../shared/*"
       ]
+      ,
+      "@layouts/*": [
+        "./src/layouts/*"
+      ],
+      "@pages/*": [
+        "./src/pages/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@stores/*": [
+        "./src/stores/*"
+      ],
+      "@lib/*": [
+        "./lib/*"
+      ]
     }
     
   },
