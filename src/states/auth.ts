@@ -1,7 +1,7 @@
 import type { ApiResponse, User, UserCredentials } from "../../lib/types";
 import { useSessionStorage } from "@vueuse/core";
 import { useCookies } from "@vueuse/integrations/useCookies.mjs";
-// 
+//
 import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
@@ -15,6 +15,12 @@ export const REFRESH_TOKEN_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
 // });
 const API_URL = import.meta.env.VITE_API_URL;
 // const API_URL = "https://api.y2p.lakubudavid.me/api"
+
+export type SignupResult = UserCredentials & {
+  status?: string;
+  message?: string;
+  error?: any;
+};
 
 export const useAuth = () => {
   // const credentials = ref<UserCredentials | null>()
@@ -32,17 +38,17 @@ export const useAuth = () => {
   // Check if access token is expired
   const isTokenExpired = () => {
     // console.log(sessionStorage.value)
-      console.log("checking if expired")
+    console.log("checking if expired");
     if (!sessionStorage.value.tokenExpiresAt) return true;
-      console.log("checking expiation date")
+    console.log("checking expiation date");
     const result = Date.now() > sessionStorage.value.tokenExpiresAt;
-    return result
+    return result;
   };
 
   // Refresh token function
   const refreshToken = async () => {
     // if (!sessionStorage.value.refreshToken) return false;
-    console.log("refreshing")
+    console.log("refreshing");
     // const toast = useToast();
     try {
       const response = await fetch(`${API_URL}/auth/refresh`, {
@@ -95,7 +101,7 @@ export const useAuth = () => {
   };
   const getAuthHeader = async () => {
     if (isTokenExpired()) {
-      console.log("expired")
+      console.log("expired");
       const refreshed = await refreshToken();
       if (!refreshed) {
         return { Authorization: "" };
@@ -179,12 +185,12 @@ export const useAuth = () => {
           startAutoRefresh();
         }
         return { data: credentials };
-      } catch (err ) {
+      } catch (err) {
         console.log("[Error : Auth]", err);
         return { error: err as Error, data: undefined };
       }
     },
-    signUp: async (name: string, email: string, password: string) => {
+    signUp: async (name: string, email: string, password: string)   => {
       try {
         // console.log(email, password);
         const url = `${API_URL}/auth/signup`;
@@ -203,12 +209,7 @@ export const useAuth = () => {
           mode: "cors",
           credentials: "include",
         });
-        const result = (await response.json()) as UserCredentials & {
-          status: string;
-          message?: string;
-          error?: any;
-        };
-
+        const result = (await response.json()) as SignupResult
         if (result.status !== "ok") {
           console.error("[Error: Auth] Signup failed", result.message);
           return { error: result.message || "Signup failed" };

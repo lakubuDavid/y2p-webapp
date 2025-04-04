@@ -1,4 +1,3 @@
-import { useToast } from "primevue/usetoast";
 import type { User, UserCredentials } from "./types";
 import { create } from "apisauce";
 

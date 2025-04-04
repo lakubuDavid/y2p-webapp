@@ -4,7 +4,7 @@ import ReservationListItem from "../../components/ReservationListItem.vue";
 import NewReservationDialog from "../../components/dialog/NewReservatioDialog.vue";
 import { ref } from "vue";
 import { api } from "../../../lib/client";
-import type { CreateReservationParams } from "../../../lib/types";
+import type { ApiResponse, CreateReservationParams } from "../../../lib/types";
 import { useToast } from "primevue/usetoast";
 import { useReservationsStore } from "../../stores/reservations";
 import { storeToRefs } from "pinia";
@@ -87,7 +87,8 @@ const { refresh: fetchReservations } = store;
                       severity: 'error',
                       life: 5000,
                       summary: `Reservation error : ${
-                        response.data?.error || response.problem
+                        (response.data as ApiResponse<any>).error ||
+                        response.problem
                       }`,
                     });
                   }

@@ -17,7 +17,7 @@ const submit = async (ev: Event) => {
     form.value?.password ?? "",
   );
   if (error) {
-    toast.add({ severity: "danger", summary: error });
+    toast.add({ severity: "danger", summary: error.message });
   } else {
     await router.push("/");
   }
