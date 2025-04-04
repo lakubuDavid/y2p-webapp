@@ -5,7 +5,7 @@ import LoginPage from "./pages/LoginPage.vue";
 import SignupPage from "./pages/SignupPage.vue";
 import CheckStatusPage from "./pages/CheckStatusPage.vue";
 import AccountPage from "./pages/staff/AccountPage.vue";
-import ReservationPage from "./pages/ReservationPage.vue";
+// import ReservationPage from "./pages/ReservationPage.vue";
 
 import ListReservationsPage from "./pages/staff/ListReservationsPage.vue";
 import ListPetsRecordsPage from "./pages/staff/ListPetsRecordsPage.vue";
@@ -27,11 +27,11 @@ const routes = [
     component: ListReservationsPage,
     name: "reservation",
   },
-  {
-    path: "/staff/reservations/new",
-    component: ReservationPage,
-    name: "new_reservation",
-  },
+  // {
+  //   path: "/staff/reservations/new",
+  //   component: ReservationPage,
+  //   name: "new_reservation",
+  // },
   // { path: "/staff/:pathMatch(.*)*", redirect: "/staff/account" },
   // {path:"/:path(.*)*",redirect:"/"}
 ];

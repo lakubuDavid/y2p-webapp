@@ -56,7 +56,8 @@ fetchAccounts();
         <NewUserDialog />
       </Dialog>
       <DataView
-        :value="/*@ts-ignore*/ accountsRef"
+        :value="accountsRef"
+        data-key="id"
         paginator
         :rows="5"
         paginatorPosition="top"

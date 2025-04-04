@@ -39,17 +39,14 @@ const store = usePetsStore();
           >
           </Dialog>
           <DataView
-            :value="/*@ts-ignore*/ store.pets"
+            :value="store.pets"
+            data-key="id"
             paginator
             :rows="5"
             paginatorPosition="top"
           >
             <template #list="list">
-              <div
-                v-for="(item, index) in list.items"
-                class="pad-y-10"
-                :key="index"
-              >
+              <div v-for="item in list.items" class="pad-y-10" :key="item.id">
                 <!-- <Card> -->
                 <!-- <template #content> -->
                 <div class="row">
