@@ -100,6 +100,7 @@ const { refresh: fetchReservations } = store;
             :value="reservationsRef"
             paginator
             :rows="5"
+            data-key="id"
             paginatorPosition="top"
           >
             <template #list="list">

@@ -67,7 +67,7 @@ const submitReservation = async () => {
       life: 5000,
     });
     return;
-  } else if (sameDay(selectedDateRef.value, today())) {
+  } else if (sameDay(selectedDateRef.value, new Date(today()))) {
     if (selectedTime.value.from) {
       const now = new Date();
       const { hour, minute } = getTimeFromString(
@@ -103,7 +103,7 @@ const submitReservation = async () => {
       specie: selectedSpecie.value.toLowerCase(),
     },
     reservationInfo: {
-      date: normalizedDate(selectedDateRef.value),
+      date: new Date(normalizedDate(selectedDateRef.value)),
       time: selectedTime.value,
     },
   };

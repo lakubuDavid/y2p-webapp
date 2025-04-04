@@ -14,8 +14,8 @@ export const api = create({
 
 api.addMonitor((response) => {
   if (response.status == 401) {
-    const toast = useToast();
-    toast.add({ severity: "error", summary: "Session expired" });
+    // const toast = useToast();
+    // toast.add({ severity: "error", summary: "Session expired" });
     console.log("401 error:", response);
   }
   if (response.status == 500) {

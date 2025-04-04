@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import Layout from "../../layouts/staff.vue";
 // import type { ApiResponse, UserData } from "../../../lib/types";
 // import { api } from "../../../lib/client";
@@ -10,24 +10,9 @@ import { storeToRefs } from "pinia";
 //import { api } from "../../../lib/client";
 
 const toast = useToast();
-//const auth = useAuth();
-//const fetchUsers = async () => {
-//  const { data, ok } = await api.get("/user", {
-//    withCredentials: true,
-//    headers: { ...auth.getAuthHeader() },
-//  });
-//  if (ok) {
-//    const { data: rData, error } = data as ApiResponse<UserData[]>;
-//    if (error) {
-//      toast.add({ severity: "error", summary: error });
-//    } else {
-//      accountsRef.value = rData;
-//    }
-//  }
-//};
-//const accountsRef = ref([] as UserData[]);
-
 const store = useAccountsStore();
+
+const showNewAccountDialog = ref(false);
 
 //console.log(await api.get("/auth/me"));
 
@@ -51,6 +36,7 @@ fetchAccounts();
             class="mr-2"
             severity="secondary"
             text
+            @click="showNewAccountDialog = true"
           />
           <Button
             icon="pi pi-refresh"
@@ -59,30 +45,20 @@ fetchAccounts();
             @click="fetchAccounts()"
             text
           />
-          <!-- <IconField> -->
-          <!-- <InputIcon> -->
-          <!-- <i class="pi pi-search" /> -->
-          <!-- </InputIcon> -->
-          <!-- <InputText class="w-400" placeholder="Search" /> -->
-          <!-- </IconField> -->
-          <!-- <Button icon="pi pi-search" severity="secondary" text /> -->
         </template>
       </Toolbar>
-      <!-- <div class="row"> -->
-      <!-- <Button label="Create" /> -->
-      <!-- <Button -->
-      <!-- label="Refresh" -->
-      <!-- icon="pi pi-refresh" -->
-      <!-- iconPos="right" -->
-      <!-- @click="() => fetchAccounts()" -->
-      <!-- /> -->
-      <!-- </div> -->
-      <!-- <Divider /> -->
-      <!-- @ts-ignore -->
+      <Dialog
+        v-model:visible="showNewAccountDialog"
+        modal
+        header="Create account"
+        :style="{ width: '40rem' }"
+      >
+        <NewUserDialog />
+      </Dialog>
       <DataView
         :value="/*@ts-ignore*/ accountsRef"
         paginator
-        :rows="10"
+        :rows="5"
         paginatorPosition="top"
       >
         <template #list="list">

@@ -50,25 +50,26 @@ const store = usePetsStore();
                 class="pad-y-10"
                 :key="index"
               >
-                <Card>
-                  <template #content>
-                    <div class="row">
-                      <div class="col">Name : {{ item.name }}</div>
-                      <div class="col">Owner : {{ item.owner.name }}</div>
-                    </div>
-                    <div class="row">
-                      <div class="col">Specie : {{ item.specie }}</div>
-                      <div class="col">
-                        Recorded At:
-                        {{ `${new Date(item.createdAt).toLocaleString()}` }}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <Button icon="pi pi-eye" text />
-                      <Button icon="pi pi-pencil" text />
-                    </div>
-                  </template>
-                </Card>
+                <!-- <Card> -->
+                <!-- <template #content> -->
+                <div class="row">
+                  <div class="col">Name : {{ item.name }}</div>
+                  <div class="col">Owner : {{ item.owner.name }}</div>
+                </div>
+                <div class="row">
+                  <div class="col">Specie : {{ item.specie }}</div>
+                  <div class="col">
+                    Recorded At:
+                    {{ `${new Date(item.createdAt).toLocaleString()}` }}
+                  </div>
+                </div>
+                <div class="row">
+                  <Button icon="pi pi-eye" text />
+                  <Button icon="pi pi-pencil" text />
+                </div>
+                <!-- </template> -->
+                <!-- </Card> -->
+                <Divider />
               </div>
             </template>
           </DataView>

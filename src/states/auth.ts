@@ -1,7 +1,7 @@
 import type { ApiResponse, User, UserCredentials } from "../../lib/types";
 import { useSessionStorage } from "@vueuse/core";
 import { useCookies } from "@vueuse/integrations/useCookies.mjs";
-import { useToast } from "primevue/usetoast";
+// 
 import { onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
@@ -43,7 +43,7 @@ export const useAuth = () => {
   const refreshToken = async () => {
     // if (!sessionStorage.value.refreshToken) return false;
     console.log("refreshing")
-    const toast = useToast();
+    // const toast = useToast();
     try {
       const response = await fetch(`${API_URL}/auth/refresh`, {
         method: "POST",
@@ -67,7 +67,7 @@ export const useAuth = () => {
           };
         }
         // const toast = useToast();
-        toast.add({ severity: "error", summary: "Session expired" });
+        // toast.add({ severity: "error", summary: "Session expired" });
         useRouter().push("/login");
         throw new Error("Token refresh failed");
       }
@@ -88,7 +88,7 @@ export const useAuth = () => {
       console.error("[Error: Auth] Token refresh failed", err);
 
       // const toast = useToast();
-      toast.add({ severity: "error", summary: "Session error" });
+      // toast.add({ severity: "error", summary: "Session error" });
       useRouter().push("/login");
       return false;
     }
@@ -179,9 +179,9 @@ export const useAuth = () => {
           startAutoRefresh();
         }
         return { data: credentials };
-      } catch (err) {
+      } catch (err ) {
         console.log("[Error : Auth]", err);
-        return { error: err, data: undefined };
+        return { error: err as Error, data: undefined };
       }
     },
     signUp: async (name: string, email: string, password: string) => {

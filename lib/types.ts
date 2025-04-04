@@ -1,4 +1,4 @@
-import {z} from "zod"
+import { z } from "zod";
 export type User = {
   id: number;
   name: string;
@@ -43,8 +43,8 @@ export type ReservationSlotsType = ReservationSlotType[];
 export type ApiResponse<T> = {
   error?: Error;
   data: T;
-  status?:string;
-  message?:string
+  status?: string;
+  message?: string;
 };
 
 export type Reservation = {
@@ -65,9 +65,9 @@ export type PetData = {
 };
 
 export type PetInfo = {
-  pet:PetData,
-  owner:Omit<UserData,"type" | "id">
-}
+  pet: PetData;
+  owner: Omit<UserData, "type" | "id">;
+};
 
 export type UserData = {
   id: number;
@@ -108,29 +108,68 @@ export type CreateReservationParams = {
     };
   };
 };
-
-const userInfoSchema = z
+export const CreateUserSchema = z
   .object({
-    name: z.string().min(1, 'Name is required'),
-    surname: z.string().min(1, 'Surname is required'),
-    email: z.string().email('Invalid email address').optional().or(z.literal('')),
+    name: z.string().min(1, "Name is required"),
+    surname: z.string().min(1, "Surname is required"),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .optional()
+      .or(z.literal("")),
     phoneNumber: z
       .string()
-      .min(7, 'Phone number is too short')
+      .min(7, "Phone number is too short")
       .optional()
-      .or(z.literal('')),
+      .or(z.literal("")),
+
   })
   .superRefine((data, ctx) => {
     if (!data.email && !data.phoneNumber) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'At least one contact method (email or phone number) is required',
-        path: ['email'],
+        message:
+          "At least one contact method (email or phone number) is required",
+        path: ["email"],
       });
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'At least one contact method (email or phone number) is required',
-        path: ['phoneNumber'],
+        message:
+          "At least one contact method (email or phone number) is required",
+        path: ["phoneNumber"],
+      });
+    }
+  });
+export type CreateUserParams = z.infer<typeof CreateUserSchema>;
+
+const userInfoSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    surname: z.string().min(1, "Surname is required"),
+    email: z
+      .string()
+      .email("Invalid email address")
+      .optional()
+      .or(z.literal("")),
+    phoneNumber: z
+      .string()
+      .min(7, "Phone number is too short")
+      .optional()
+      .or(z.literal("")),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.email && !data.phoneNumber) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "At least one contact method (email or phone number) is required",
+        path: ["email"],
+      });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "At least one contact method (email or phone number) is required",
+        path: ["phoneNumber"],
       });
     }
   });
@@ -138,21 +177,21 @@ const userInfoSchema = z
 export const CreateReservationSchema = z.object({
   userInfo: userInfoSchema,
   petInfo: z.object({
-    name: z.string().min(1, 'Pet name is required'),
-    specie: z.string().min(1, 'Pet specie is required'),
+    name: z.string().min(1, "Pet name is required"),
+    specie: z.string().min(1, "Pet specie is required"),
   }),
   reservationInfo: z.object({
     date: z.date({
-      required_error: 'Date is required',
-      invalid_type_error: 'Invalid date',
+      required_error: "Date is required",
+      invalid_type_error: "Invalid date",
     }),
     time: z.object({
       from: z
         .string()
-        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)'),
+        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)"),
       to: z
         .string()
-        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'Invalid time format (HH:mm)'),
+        .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format (HH:mm)"),
     }),
   }),
 });

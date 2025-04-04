@@ -9,7 +9,7 @@ export const useReservationsStore = defineStore("reservations", () => {
   const getAvailableSlots = async (date?: Date) => {
     const { data, error } = (
       await api.get(
-        `/reservation/slots?date=${(date ?? today()).toISOString()}`,
+        `/reservation/slots?date=${(date ?? new Date(today())).toISOString()}`,
       )
     ).data as ApiResponse<TimeSlot[]>;
     if (error) {
