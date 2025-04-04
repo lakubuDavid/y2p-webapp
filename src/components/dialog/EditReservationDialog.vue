@@ -20,7 +20,10 @@ const selectedDateRef = ref(props.item.reservation.date);
 const selectedTime = ref<{ from: string; to: string }>();
 
 const updateReservation = async () => {
-  const { ok, data } = await api.patch("/reservation");
+  const { ok, data } = await api.patch("/reservation", {
+    date: selectedDateRef.value,
+    time: selectedTime.value,
+  });
   if (ok) {
     const { error } = data as ApiResponse<ReservationRecord>;
     if (error) {
@@ -124,6 +127,7 @@ const updateReservation = async () => {
         severity="contrast"
         icon="pi pi-save"
         iconPos="right"
+        @click="updateReservation()"
       />
       <Button label="Cancel" severity="secondary" />
       <Spacer fill="true" />
