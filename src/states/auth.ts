@@ -110,26 +110,26 @@ export const useAuth = () => {
     return { Authorization: `Bearer ${sessionStorage.value.accessToken}` };
   };
   // Periodically refresh token in the background
-  let refreshInterval: number | undefined;
+  // let refreshInterval: number | undefined;
 
-  const startAutoRefresh = () => {
-    stopAutoRefresh();
-    refreshInterval = window.setInterval(
-      async () => {
-        if (isTokenExpired()) {
-          await refreshToken();
-        }
-      },
-      5 * 60 * 1000,
-    ); // Refresh every 5 minutes
-  };
+  // const _startAutoRefresh = () => {
+  //   stopAutoRefresh();
+  //   refreshInterval = window.setInterval(
+  //     async () => {
+  //       if (isTokenExpired()) {
+  //         await refreshToken();
+  //       }
+  //     },
+  //     5 * 60 * 1000,
+  //   ); // Refresh every 5 minutes
+  // };
 
-  const stopAutoRefresh = () => {
-    if (refreshInterval) {
-      clearInterval(refreshInterval);
-      refreshInterval = undefined;
-    }
-  };
+  // const stopAutoRefresh = () => {
+  //   if (refreshInterval) {
+  //     clearInterval(refreshInterval);
+  //     refreshInterval = undefined;
+  //   }
+  // };
 
   if (isTokenExpired()) {
     refreshToken();
@@ -182,7 +182,7 @@ export const useAuth = () => {
             user: credentials,
             tokenExpiresAt: Date.now() + ACCESS_TOKEN_EXPIRY,
           };
-          startAutoRefresh();
+          // startAutoRefresh();
         }
         return { data: credentials };
       } catch (err) {
@@ -223,7 +223,7 @@ export const useAuth = () => {
           tokenExpiresAt: Date.now() + ACCESS_TOKEN_EXPIRY,
         };
         // Start auto-refresh
-        startAutoRefresh();
+        // startAutoRefresh();
         return result;
       } catch (err) {
         console.log("[Error : Auth]", err);
@@ -251,7 +251,7 @@ export const useAuth = () => {
         cookies.remove("__refresh_token");
 
         // if (!response.ok) throw new Error("Logout failed");
-        stopAutoRefresh();
+        // stopAutoRefresh();
 
         return response;
       } catch (err) {
