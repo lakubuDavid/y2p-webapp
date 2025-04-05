@@ -11,6 +11,7 @@ import ListReservationsPage from "./pages/staff/ListReservationsPage.vue";
 import ListPetsRecordsPage from "./pages/staff/ListPetsRecordsPage.vue";
 
 const routes = [
+  { path: "/", redirect: "/home" },
   { path: "/home", component: HomePage, name: "home" },
   { path: "/login", component: LoginPage, name: "login" },
   { path: "/signup", component: SignupPage, name: "signup" },
@@ -19,7 +20,6 @@ const routes = [
     component: CheckStatusPage,
     name: "check_reservation",
   },
-  { path: "/", redirect: "/home" },
   { path: "/staff/account", component: AccountPage, name: "staff_account" },
   { path: "/staff/pets", component: ListPetsRecordsPage, name: "staff_pets" },
   {
@@ -33,7 +33,7 @@ const routes = [
   //   name: "new_reservation",
   // },
   // { path: "/staff/:pathMatch(.*)*", redirect: "/staff/account" },
-  // {path:"/:path(.*)*",redirect:"/"}
+  {path:"/:path(.*)*",redirect:"/"}
 ];
 
 export const router = createRouter({
