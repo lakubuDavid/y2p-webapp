@@ -2,7 +2,7 @@ import type { ApiResponse, User, UserCredentials } from "../../lib/types";
 import { useSessionStorage } from "@vueuse/core";
 import { useCookies } from "@vueuse/integrations/useCookies.mjs";
 //
-import { onMounted, onUnmounted } from "vue";
+
 import { useRouter } from "vue-router";
 
 export const ACCESS_TOKEN_EXPIRY = 15 * 60 * 1000; // 15 minutes
@@ -134,8 +134,8 @@ export const useAuth = () => {
   if (isTokenExpired()) {
     refreshToken();
   }
-  onMounted(startAutoRefresh);
-  onUnmounted(stopAutoRefresh);
+  // onMounted(startAutoRefresh);
+  // onUnmounted(stopAutoRefresh);
   return {
     credentials: sessionStorage,
     getAuthHeader,
