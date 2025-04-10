@@ -4,13 +4,14 @@ import { computed, ref, watch } from "vue";
 import {
   CreateReservationSchema,
   getTimeFromString,
+  toReservationDate,
   type CreateReservationParams,
   type TimeSlot,
   type TimeString,
 } from "../../../lib/types";
 import { useToast } from "primevue/usetoast";
 import { useReservationsStore } from "../../stores/reservations";
-import { normalizedDate, sameDay, today } from "../../../lib/utils";
+import { sameDay, today } from "../../../lib/utils";
 const options = ["Cat", "Dog", "Bird", "Other"];
 
 const { getAvailableSlots } = useReservationsStore();
@@ -20,7 +21,7 @@ const selectedDateRef = ref<Date>();
 const selectedTime = ref<{ from: string; to: string }>();
 
 const props = defineProps<{
-  handleSubmit: (data: CreateReservationParams) => void | Promise<void>;
+  handleSubmit: (data: CreateReservationParams) => void | Promise<any>;
   handleCancel: () => void | Promise<void>;
 }>();
 const userInfo = ref({
@@ -103,7 +104,7 @@ const submitReservation = async () => {
       specie: selectedSpecie.value.toLowerCase(),
     },
     reservationInfo: {
-      date: new Date(normalizedDate(selectedDateRef.value)),
+      date: toReservationDate(selectedDateRef.value),
       time: selectedTime.value,
     },
   };
@@ -147,7 +148,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               id="name"
               name="name"
-              class="w-150"
+              class="w-150px"
               v-model="userInfo.name"
               required
             />
@@ -157,7 +158,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               id="surname"
               name="surname"
-              class="w-150"
+              class="w-150px"
               v-model="userInfo.surname"
               required
             />
@@ -170,7 +171,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               name="email"
               id="email"
-              class="w-300"
+              class="w-300px"
               v-model="userInfo.email"
             />
           </FloatLabel>
@@ -179,7 +180,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               name="phoneNumber"
               id="phoneNumber"
-              class="w-250"
+              class="w-250px"
               v-model="userInfo.phoneNumber"
             />
           </FloatLabel>
@@ -192,7 +193,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               id="petName"
               name="petName"
-              class="w-150"
+              class="w-150px"
               v-model="petInfo.name"
               required
             />
@@ -203,7 +204,7 @@ watch(selectedDateRef, (value) => {
           <!-- <div class="row"> -->
           <Select
             :options="options"
-            class="w-300"
+            class="w-300px"
             id="selectedSpecie"
             name="selectedSpecie"
             placeholder="Select your pet specie"
@@ -219,7 +220,7 @@ watch(selectedDateRef, (value) => {
             <InputText
               id="specieName"
               name="specieName"
-              class="w-200"
+              class="w-200px"
               v-model="otherSpecie"
             />
           </FloatLabel>
@@ -233,7 +234,7 @@ watch(selectedDateRef, (value) => {
             <DatePicker
               id="reservationDate"
               name="reservationDate"
-              class="w-150"
+              class="w-150px"
               date-format="dd/mm/yy"
               :min-date="new Date(new Date().setHours(0, 0, 0))"
               v-model="selectedDateRef"
@@ -246,7 +247,7 @@ watch(selectedDateRef, (value) => {
           <!-- <div class="row"> -->
           <Select
             :options="slotsRef"
-            class="w-300"
+            class="w-300px"
             id="selectedTime"
             name="selectedTime"
             placeholder="Select a time slot"
@@ -271,7 +272,7 @@ watch(selectedDateRef, (value) => {
         </div>
       </FieldSet>
     </div>
-    <div class="row gap-10">
+    <div class="row gap-10px">
       <Button label="Submit" type="submit" />
       <Button label="Cancel" @click="handleCancel()" />
     </div>

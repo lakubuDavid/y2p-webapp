@@ -1,0 +1,44 @@
+{
+  "services": [
+    {
+      "label": "Professional Grooming",
+      "description": "Our comprehensive grooming services include breed-specific bathing, gentle coat detangling, nail trimming, ear cleaning, and dental care. Our certified pet groomers use premium, pet-safe products tailored to your companion's skin sensitivity and coat type.",
+      "icon": {
+        "type": "text",
+        "text": "🛁"
+      }
+    },
+    {
+      "label": "Veterinary Consultation",
+      "description": "Our thorough wellness examinations are conducted by experienced veterinarians who carefully assess your pet's overall health, weight, coat, eyes, ears, and vital signs. We take time to discuss nutrition, behavior, and preventative care options specific to your pet's breed, age, and lifestyle.",
+      "icon": {
+        "type": "text",
+        "text": "🩺"
+      }
+    },
+    {
+      "label": "Vaccinations",
+      "description": "We provide essential vaccinations following AAHA protocols, customized to your pet's specific needs based on lifestyle and risk factors. Our gentle approach and post-vaccination monitoring ensure your pet's comfort and safety throughout the process.",
+      "icon": {
+        "type": "text",
+        "text": "💉"
+      }
+    },
+    {
+      "label": "Dental Care",
+      "description": "Our comprehensive dental services include thorough examination, professional cleaning, polishing, and treatment of dental issues. We use advanced equipment to address periodontal disease and provide guidance on maintaining your pet's oral health at home.",
+      "icon": {
+        "type": "text",
+        "text": "🦷"
+      }
+    },
+    {
+      "label": "Surgical Services",
+      "description": "Our surgical team provides both routine and specialized procedures in our state-of-the-art facility. From spay/neuter to orthopedic interventions, we utilize modern anesthesia protocols, continuous monitoring, and thoughtful pain management for your pet's safety and comfort.",
+      "icon": {
+        "type": "text",
+        "text": "👨🏽‍⚕️"
+      }
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import "./style.css";
 import "./primitives.css";
+import "virtual:uno.css"
 import App from "./App.vue";
 import { router } from "./routes";
 // import VCalendar from "v-calendar";

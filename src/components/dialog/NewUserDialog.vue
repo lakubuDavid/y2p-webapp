@@ -22,7 +22,7 @@ const userInfo = ref({
             <InputText
               id="name"
               name="name"
-              class="w-150"
+              class="w-150px"
               v-model="userInfo.name"
               required
             />
@@ -32,7 +32,7 @@ const userInfo = ref({
             <InputText
               id="surname"
               name="surname"
-              class="w-150"
+              class="w-150px"
               v-model="userInfo.surname"
               required
             />
@@ -45,7 +45,7 @@ const userInfo = ref({
             <InputText
               name="email"
               id="email"
-              class="w-300"
+              class="w-300px"
               v-model="userInfo.email"
             />
           </FloatLabel>

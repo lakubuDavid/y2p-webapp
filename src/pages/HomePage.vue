@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import Layout from "../layouts/default.vue";
+import { services } from "../data/services.json";
 // import { useAppState } from "../composables/appState";
 //
 // const { setCurrentPage } = useAppState();
@@ -15,10 +16,10 @@ console.log(response);
         <div class="text-content">
           <div class="__text">
             <h2>Your best friend deserve the best care</h2>
-            <p>
+            <div>
               Certified expert and caregiver always avalable for you<br />
               Call to schedule an appointment
-            </p>
+            </div>
             <br />
             <Button
               icon="pi pi-phone"
@@ -31,37 +32,28 @@ console.log(response);
         </div>
         <div class="__bg_img"></div>
       </section>
-      <section>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          eos nostrum suscipit cumque impedit hic. Placeat deleniti, quae,
-          perspiciatis odio illo a impedit doloremque blanditiis, in debitis
-          dignissimos nemo repudiandae!
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          eos nostrum suscipit cumque impedit hic. Placeat deleniti, quae,
-          perspiciatis odio illo a impedit doloremque blanditiis, in debitis
-          dignissimos nemo repudiandae!
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          eos nostrum suscipit cumque impedit hic. Placeat deleniti, quae,
-          perspiciatis odio illo a impedit doloremque blanditiis, in debitis
-          dignissimos nemo repudiandae!
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          eos nostrum suscipit cumque impedit hic. Placeat deleniti, quae,
-          perspiciatis odio illo a impedit doloremque blanditiis, in debitis
-          dignissimos nemo repudiandae!
-        </p>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis
-          eos nostrum suscipit cumque impedit hic. Placeat deleniti, quae,
-          perspiciatis odio illo a impedit doloremque blanditiis, in debitis
-          dignissimos nemo repudiandae!
-        </p>
+      <section class="pad-20">
+        <div class="column pad-20">
+          <h2 class="heading-2">Our Services</h2>
+          <span class="heading">Discover our services </span>
+          <div class="row wrap justify-center pad-50">
+            <div
+              class="row items-center gap-20 w-45p"
+              v-for="(service, i) in services"
+              :key="i"
+            >
+              <span
+                v-if="service.icon.type == 'text'"
+                :style="{ fontSize: '5rem' }"
+                >{{ service.icon.text }}
+              </span>
+              <div class="column">
+                <h3>{{ service.label }}</h3>
+                <span>{{ service.description }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   </Layout>
@@ -76,7 +68,8 @@ main {
   }
 }
 #hero-banner {
-  height: 90dvh;
+  max-height: 90dvh;
+  min-height: 75dvh;
   display: grid;
   background-image: linear-gradient(
       to right,
@@ -84,7 +77,7 @@ main {
       rgba(255, 255, 255, 0)
     ),
     url("/hero-dog.jpg");
-  background-position: right;
+  background-position: left;
   background-size: cover;
   background-repeat: no-repeat;
   grid-template-columns: 1fr 1.2fr;
@@ -93,7 +86,7 @@ main {
     display: flex;
     place-items: center;
     font-size: 1.2rem;
-    padding: 30px;
+    padding: 10px;
     /*    -webkit-text-stroke: 1px;*/
     h2 {
       /*      font-weight: 600;*/
@@ -105,8 +98,8 @@ main {
     .__text {
       position: absolute;
       color: #ffd;
-      padding-left: 4rem;
-      max-width: 40dvw;
+      padding-left: 2rem;
+      max-width: 50dvw;
     }
   }
   a {

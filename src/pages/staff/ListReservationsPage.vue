@@ -3,11 +3,12 @@ import Layout from "../../layouts/staff.vue";
 import ReservationListItem from "../../components/ReservationListItem.vue";
 import NewReservationDialog from "../../components/dialog/NewReservatioDialog.vue";
 import { ref } from "vue";
-import { api } from "../../../lib/client";
-import type { ApiResponse, CreateReservationParams } from "../../../lib/types";
+//import { api } from "../../../lib/client";
+//import type { ApiResponse, CreateReservationParams } from "../../../lib/types";
 import { useToast } from "primevue/usetoast";
 import { useReservationsStore } from "../../stores/reservations";
 import { storeToRefs } from "pinia";
+import type { CreateReservationParams } from "@lib/types";
 const toast = useToast();
 //const router = useRouter();
 
@@ -73,29 +74,57 @@ const { refresh: fetchReservations } = store;
                 }
               "
               :handleSubmit="
-                async (data: CreateReservationParams) => {
-                  const response = await api.post('/reservation', data);
-                  if (response.ok) {
-                    toast.add({
-                      severity: 'success',
-                      summary: 'Reservation done!',
-                      life: 5000,
+                (data: CreateReservationParams) => {
+                  store
+                    .create(data, (err) => {
+                      toast.add({
+                        severity: 'error',
+                        life: 5000,
+                        summary: `Reservation error : ${err}`,
+                      });
+                    })
+                    .then(({ error }) => {
+                      if (!error) {
+                        toast.add({
+                          severity: 'success',
+                          life: 5000,
+                          summary: 'Done !',
+                        });
+                      }
                     });
-                    showNewReservationDialog = false;
-                  } else {
-                    toast.add({
-                      severity: 'error',
-                      life: 5000,
-                      summary: `Reservation error : ${
-                        (response.data as ApiResponse<any>).error ||
-                        response.problem
-                      }`,
-                    });
-                  }
-                  console.log(response.data);
                 }
               "
             />
+            <!-- <NewReservationDialog -->
+            <!-- :handle-cancel=" -->
+            <!-- () => { -->
+            <!-- showNewReservationDialog = false; -->
+            <!-- } -->
+            <!-- " -->
+            <!-- :handleSubmit=" -->
+            <!-- async (data: CreateReservationParams) => { -->
+            <!-- const response = await api.post('/reservation', data); -->
+            <!-- if (response.ok) { -->
+            <!-- toast.add({ -->
+            <!-- severity: 'success', -->
+            <!-- summary: 'Reservation done!', -->
+            <!-- life: 5000, -->
+            <!-- }); -->
+            <!-- showNewReservationDialog = false; -->
+            <!-- } else { -->
+            <!-- toast.add({ -->
+            <!-- severity: 'error', -->
+            <!-- life: 5000, -->
+            <!-- summary: `Reservation error : ${ -->
+            <!-- (response.data as ApiResponse<any>).error || -->
+            <!-- response.problem -->
+            <!-- }`, -->
+            <!-- }); -->
+            <!-- } -->
+            <!-- console.log(response.data); -->
+            <!-- } -->
+            <!-- " -->
+            <!-- /> -->
           </Dialog>
           <DataView
             :value="reservationsRef"
@@ -110,7 +139,10 @@ const { refresh: fetchReservations } = store;
                 class="pad-y-10"
                 :key="index"
               >
-                <ReservationListItem :item="item" />
+                <ReservationListItem
+                  :item="item"
+                  :handleUpdate="(values) => store.update(item.id, values)"
+                />
               </div>
             </template>
           </DataView>

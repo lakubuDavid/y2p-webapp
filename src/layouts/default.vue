@@ -7,5 +7,6 @@ import UserBadge from "../components/UserBadge.vue";
     <NavBar />
     <UserBadge />
     <slot />
+    <Footer />
   </div>
 </template>

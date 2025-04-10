@@ -1,16 +1,29 @@
 <script setup lang="ts">
 //@ts-ignore
 import { capitalize, computed, ref } from "vue";
-import type { ReservationRecord } from "../../lib/types";
+//@ts-ignore
+import {
+  formatReservationDate,
+  type Reservation,
+  type ReservationRecord,
+} from "../../lib/types";
 //import ShowReservationDialog from "./dialog/ShowReservationDialog.vue";
 //import EditReservationDialog from "./dialog/EditReservationDialog.vue";
 
 const props = defineProps<{
   item: ReservationRecord;
+  handleUpdate: (values: Partial<Reservation>) => Promise<any>;
 }>();
 
 const showInfo = ref(false);
 const showEdit = ref(false);
+
+//@ts-ignore
+const date = computed(() => {
+  const _date = formatReservationDate(props.item.reservation.date);
+
+  return _date;
+});
 
 //@ts-ignore
 const icon = computed(() => {
@@ -30,6 +43,8 @@ const onEditClick = (ev: Event) => {
   ev.preventDefault();
   showEdit.value = true;
 };
+
+//console.log(props.item);
 </script>
 <template lang="">
   <div>
@@ -43,7 +58,7 @@ const onEditClick = (ev: Event) => {
       >
       <span>
         <strong>Date : </strong>
-        {{ new Date(item.reservation.date).toLocaleDateString() }}</span
+        {{ date.toLocaleDateString() }}</span
       >
     </div>
     <div class="row">
@@ -99,7 +114,7 @@ const onEditClick = (ev: Event) => {
       header="Edit reservation"
       :style="{ width: '40rem' }"
     >
-      <EditReservationDialog :item="item" />
+      <EditReservationDialog :item="item" :handleSubmit="handleSubmit" />
     </Dialog>
     <!-- </div> -->
     <Divider />

@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import type { ApiResponse, ReservationRecord } from "../../../lib/types";
+import {
+  formatReservationDate,
+  toReservationDate,
+  type Reservation,
+  type ReservationRecord,
+  type TimeSlot,
+} from "../../../lib/types";
 import { AvailableTimeSlots } from "../../constants";
-import { api } from "../../../lib/client";
-import { useToast } from "primevue/usetoast";
 
-const toast = useToast();
 const slots = AvailableTimeSlots;
 const props = defineProps<{
   item: ReservationRecord;
+  handleSubmit: <T>(values: Partial<Reservation>) => Promise<T>;
 }>();
 const icon = computed(() => {
   if (props.item.pet.specie.includes("dog")) return "dog";
@@ -16,21 +20,26 @@ const icon = computed(() => {
   if (props.item.pet.specie.includes("bird")) return "kiwi-bird";
   return "paw";
 });
-const selectedDateRef = ref(props.item.reservation.date);
-const selectedTime = ref<{ from: string; to: string }>();
+const selectedDateRef = ref(formatReservationDate(props.item.reservation.date));
+const selectedTime = ref<TimeSlot>(props.item.reservation.time);
 
 const updateReservation = async () => {
-  const { ok, data } = await api.patch("/reservation", {
-    date: selectedDateRef.value,
-    time: selectedTime.value,
+  //const { ok, data } = await api.patch("/reservation", {
+  //  date: selectedDateRef.value,
+  //  time: selectedTime.value,
+  //});
+  //if (ok) {
+  //  const { error } = data as ApiResponse<ReservationRecord>;
+  //  if (error) {
+  //  } else {
+  //    toast.add({ severity: "success", summary: "Reservation updated" });
+  //  }
+  //}
+
+  props.handleSubmit({
+    date: toReservationDate(selectedDateRef.value),
+    time: selectedTime.value as TimeSlot,
   });
-  if (ok) {
-    const { error } = data as ApiResponse<ReservationRecord>;
-    if (error) {
-    } else {
-      toast.add({ severity: "success", summary: "Reservation updated" });
-    }
-  }
 };
 </script>
 <template>
@@ -40,13 +49,13 @@ const updateReservation = async () => {
     <FieldSet legend="Client Info">
       <div class="row pad-5">
         <strong>Name</strong>
-        <span class="w-200">
+        <span class="w-200px">
           {{ `${item.user.name} ${item.user.surname}` }}
         </span>
       </div>
       <div class="row pad-5">
         <strong>Email</strong>
-        <span class="w-200">
+        <span class="w-200px">
           {{
             item.user.email
               ? item.user.email != ""
@@ -58,7 +67,7 @@ const updateReservation = async () => {
       </div>
       <div class="row pad-5">
         <strong>Phone</strong>
-        <span class="w-200">
+        <span class="w-200px">
           {{
             item.user.phoneNumber && item.user.phoneNumber.trim() != ""
               ? item.user.phoneNumber
@@ -86,7 +95,7 @@ const updateReservation = async () => {
           <DatePicker
             id="reservationDate"
             name="reservationDate"
-            class="w-150"
+            class="w-150px"
             date-format="dd/mm/yy"
             :min-date="new Date(new Date().setHours(0, 0, 0))"
             v-model="selectedDateRef"
@@ -99,11 +108,12 @@ const updateReservation = async () => {
         <!-- <div class="row"> -->
         <Select
           :options="slots"
-          class="w-300"
+          class="w-300px"
           id="selectedTime"
           name="selectedTime"
           placeholder="Select a time slot"
           v-model="selectedTime"
+          :value="selectedTime"
           required
           ><template #value="slotProps">
             <div v-if="slotProps.value" class="flex">

@@ -1,4 +1,75 @@
 import { z } from "zod";
+const ValidDaySchema = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+  z.literal(6),
+  z.literal(7),
+  z.literal(8),
+  z.literal(9),
+  z.literal(10),
+  z.literal(11),
+  z.literal(12),
+  z.literal(13),
+  z.literal(14),
+  z.literal(15),
+  z.literal(16),
+  z.literal(17),
+  z.literal(18),
+  z.literal(19),
+  z.literal(20),
+  z.literal(21),
+  z.literal(22),
+  z.literal(23),
+  z.literal(24),
+  z.literal(25),
+  z.literal(26),
+  z.literal(27),
+  z.literal(28),
+  z.literal(29),
+  z.literal(30),
+  z.literal(31),
+]);
+
+const ValidMonthSchema = z.union([
+  z.literal(1),
+  z.literal(2),
+  z.literal(3),
+  z.literal(4),
+  z.literal(5),
+  z.literal(6),
+  z.literal(7),
+  z.literal(8),
+  z.literal(9),
+  z.literal(10),
+  z.literal(11),
+  z.literal(12),
+]);
+export const ReservationDateSchema = z
+  .object({
+    day: ValidDaySchema,
+    month: ValidMonthSchema,
+    year: z.number().int().positive(),
+  })
+  .refine(
+    (data) => {
+      // Validate that the day is valid for the given month and year
+      const date = new Date(data.year, data.month - 1, data.day);
+      return (
+        date.getFullYear() === data.year &&
+        date.getMonth() === data.month - 1 &&
+        date.getDate() === data.day
+      );
+    },
+    {
+      message:
+        "Invalid date - the day does not exist for the specified month and year",
+      path: ["day"],
+    },
+  );
+
 export type User = {
   id: number;
   name: string;
@@ -40,9 +111,9 @@ export type ReservationSlotType = {
 };
 export type ReservationSlotsType = ReservationSlotType[];
 
-export type ApiResponse<T> = {
-  error?: Error;
-  data: T;
+export type ApiResponse<T, E = Error> = {
+  error?: E;
+  data?: T;
   status?: string;
   message?: string;
 };
@@ -52,7 +123,8 @@ export type Reservation = {
   petId: number;
   userId: number;
   createdAt: Date; // ISO date string
-  date: Date; // ISO date string
+  date: ReservationDate;
+  time:TimeSlot,
   status: "oncoming" | "done" | "canceled" | "reschedueld"; // assuming other statuses may exist
 };
 
@@ -101,7 +173,7 @@ export type CreateReservationParams = {
     specie: string;
   };
   reservationInfo: {
-    date: Date;
+    date: ReservationDate;
     time: {
       from: string;
       to: string;
@@ -122,7 +194,6 @@ export const CreateUserSchema = z
       .min(7, "Phone number is too short")
       .optional()
       .or(z.literal("")),
-
   })
   .superRefine((data, ctx) => {
     if (!data.email && !data.phoneNumber) {
@@ -181,10 +252,7 @@ export const CreateReservationSchema = z.object({
     specie: z.string().min(1, "Pet specie is required"),
   }),
   reservationInfo: z.object({
-    date: z.date({
-      required_error: "Date is required",
-      invalid_type_error: "Invalid date",
-    }),
+    date: ReservationDateSchema,
     time: z.object({
       from: z
         .string()
@@ -195,3 +263,53 @@ export const CreateReservationSchema = z.object({
     }),
   }),
 });
+// Helper function to format the reservation date
+export function formatReservationDate(date: ReservationDate) {
+  return new Date(Date.UTC(date.year, date.month - 1, date.day));
+}
+export function toReservationDate(date: Date): ReservationDate {
+  return {
+    day: date.getUTCDate() as ValidDay,
+    month: date.getUTCMonth() as ValidMonth,
+    year: date.getUTCFullYear(),
+  };
+}
+
+export type ValidDay =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24
+  | 25
+  | 26
+  | 27
+  | 28
+  | 29
+  | 30
+  | 31;
+export type ValidMonth = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type ReservationDate = {
+  day: ValidDay;
+  month: ValidMonth;
+  year: number;
+}; // Define base schemas

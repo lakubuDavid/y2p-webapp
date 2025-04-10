@@ -50,13 +50,17 @@ const store = usePetsStore();
                 <!-- <Card> -->
                 <!-- <template #content> -->
                 <div class="row">
-                  <div class="col">Name : {{ item.name }}</div>
-                  <div class="col">Owner : {{ item.owner.name }}</div>
+                  <div class="col"><strong>Name</strong> : {{ item.name }}</div>
+                  <div class="col">
+                    <strong>Owner</strong> : {{ item.owner.name }}
+                  </div>
                 </div>
                 <div class="row">
-                  <div class="col">Specie : {{ item.specie }}</div>
                   <div class="col">
-                    Recorded At:
+                    <strong>Specie</strong> : {{ item.specie }}
+                  </div>
+                  <div class="col">
+                    <strong>Recorded At</strong>
                     {{ `${new Date(item.createdAt).toLocaleString()}` }}
                   </div>
                 </div>

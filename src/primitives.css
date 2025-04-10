@@ -2,6 +2,10 @@
   display: flex;
 }
 
+.wrap {
+  flex-wrap: wrap;
+}
+
 /* Padding - All Sides */
 .pad-5 {
   padding: 5px;
@@ -17,6 +21,18 @@
 
 .pad-20 {
   padding: 20px;
+}
+
+.pad-30 {
+  padding: 30px;
+}
+
+.pad-50 {
+  padding: 50px;
+}
+
+.pad-100 {
+  padding: 100px;
 }
 
 /* Padding - Vertical (Top & Bottom) */
@@ -310,6 +326,10 @@
 /* Width Percentages */
 .w-25p {
   width: 25%;
+}
+
+.w-45p {
+  width: 45%;
 }
 
 .w-50p {
