@@ -15,4 +15,5 @@ import SignupPage from "./pages/SignupPage.vue";
 @import url("https://fonts.googleapis.com/css2?family=Staatliches:wght@400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bitter:wght@300;400;500;700:900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Junge:wght@400&display=swap");
 </style>

@@ -14,7 +14,8 @@ console.log(response);
     <main>
       <section id="hero-banner">
         <div class="text-content">
-          <div class="__text">
+          <div class="__text w-690px">
+            <img height="130" src="/logo.png" />
             <h2>Your best friend deserve the best care</h2>
             <div>
               Certified expert and caregiver always avalable for you<br />
@@ -26,7 +27,9 @@ console.log(response);
               label="Call Now"
               iconPos="right"
               severity="secondary"
+              class="b-1px b-solid b-black"
               rounded
+              raised
             />
           </div>
         </div>
@@ -68,18 +71,21 @@ main {
   }
 }
 #hero-banner {
-  max-height: 90dvh;
-  min-height: 75dvh;
+  min-height: 720px;
   display: grid;
-  background-image: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.52),
-      rgba(255, 255, 255, 0)
-    ),
-    url("/hero-dog.jpg");
+  aspect-ratio: 1440/720;
+  /*background-image: linear-gradient(*/
+  /*    to right,*/
+  /*    rgba(0, 0, 0, 0.52),*/
+  /*    rgba(255, 255, 255, 0)*/
+  /*  ),*/
+  /*  url("/hero-dog.jpg");*/
+  background-image: url("/hero-dog.jpg");
   background-position: left;
-  background-size: cover;
+  /*background-size: cover;*/
+  background-size: 120%;
   background-repeat: no-repeat;
+  background-position: -16px -140px;
   grid-template-columns: 1fr 1.2fr;
   .text-content {
     /*background-color: indianred;*/
@@ -91,13 +97,12 @@ main {
     h2 {
       /*      font-weight: 600;*/
       font-size: 3rem;
-      font-family: "Bitter";
       font-weight: 900;
       /*-webkit-text-stroke: 0.3px #000;*/
     }
     .__text {
       position: absolute;
-      color: #ffd;
+      /*color: #ffd;*/
       padding-left: 2rem;
       max-width: 50dvw;
     }
