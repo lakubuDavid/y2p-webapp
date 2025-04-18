@@ -8,15 +8,12 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AccountistItem: typeof import('./src/components/AccountistItem.vue')['default']
     AccountListItem: typeof import('./src/components/AccountListItem.vue')['default']
     BackButton: typeof import('./src/components/BackButton.vue')['default']
     Badge: typeof import('primevue/badge')['default']
     Button: typeof import('primevue/button')['default']
     Calendar: typeof import('primevue/calendar')['default']
-    Card: typeof import('primevue/card')['default']
     ConfirmDialog: typeof import('primevue/confirmdialog')['default']
-    Copy_ShowReservationDialog: typeof import('./src/components/dialog/copy_ShowReservationDialog.vue')['default']
     CreateReservationDialog: typeof import('./src/components/dialog/CreateReservationDialog.vue')['default']
     DataView: typeof import('primevue/dataview')['default']
     DatePicker: typeof import('primevue/datepicker')['default']
@@ -30,11 +27,8 @@ declare module 'vue' {
     Fieldset: typeof import('primevue/fieldset')['default']
     FieldSet: typeof import('primevue/fieldset')['default']
     FloatLabel: typeof import('primevue/floatlabel')['default']
-    Fluid: typeof import('primevue/fluid')['default']
     Footer: typeof import('./src/components/Footer.vue')['default']
     Form: typeof import('@primevue/forms/form')['default']
-    IconField: typeof import('primevue/iconfield')['default']
-    InputIcon: typeof import('primevue/inputicon')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Menu: typeof import('primevue/menu')['default']
     Message: typeof import('primevue/message')['default']
@@ -43,7 +37,6 @@ declare module 'vue' {
     NewPetDialog: typeof import('./src/components/dialog/NewPetDialog.vue')['default']
     NewReservatioDialog: typeof import('./src/components/dialog/NewReservatioDialog.vue')['default']
     NewUserDialog: typeof import('./src/components/dialog/NewUserDialog.vue')['default']
-    Panel: typeof import('primevue/panel')['default']
     ReservationListItem: typeof import('./src/components/ReservationListItem.vue')['default']
     ReservationSlots: typeof import('./src/components/ReservationSlots.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -57,7 +50,6 @@ declare module 'vue' {
     Spacer: typeof import('./src/components/Spacer.vue')['default']
     Tag: typeof import('primevue/tag')['default']
     Toast: typeof import('primevue/toast')['default']
-    ToggleButton: typeof import('primevue/togglebutton')['default']
     Toolbar: typeof import('primevue/toolbar')['default']
     UserBadge: typeof import('./src/components/UserBadge.vue')['default']
   }
