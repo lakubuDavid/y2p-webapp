@@ -1,18 +1,24 @@
 <script lang="ts" setup>
+import { useConfirm } from "primevue/useconfirm";
 import { computed, ref } from "vue";
 import {
-  formatReservationDate,
+  toDate,
   toReservationDate,
   type Reservation,
   type ReservationRecord,
   type TimeSlot,
 } from "../../../lib/types";
 import { AvailableTimeSlots } from "../../constants";
+import { useReservationsStore } from "@stores/reservations";
+import { useToast } from "primevue/usetoast";
+
+const confirmDeleteDialog = ref<HTMLElement>();
 
 const slots = AvailableTimeSlots;
 const props = defineProps<{
   item: ReservationRecord;
   handleSubmit: <T>(values: Partial<Reservation>) => Promise<T>;
+  close: () => void;
 }>();
 const icon = computed(() => {
   if (props.item.pet.specie.includes("dog")) return "dog";
@@ -20,25 +26,55 @@ const icon = computed(() => {
   if (props.item.pet.specie.includes("bird")) return "kiwi-bird";
   return "paw";
 });
-const selectedDateRef = ref(formatReservationDate(props.item.reservation.date));
+const selectedDateRef = ref(toDate(props.item.reservation.date));
 const selectedTime = ref<TimeSlot>(props.item.reservation.time);
 
-const updateReservation = async () => {
-  //const { ok, data } = await api.patch("/reservation", {
-  //  date: selectedDateRef.value,
-  //  time: selectedTime.value,
-  //});
-  //if (ok) {
-  //  const { error } = data as ApiResponse<ReservationRecord>;
-  //  if (error) {
-  //  } else {
-  //    toast.add({ severity: "success", summary: "Reservation updated" });
-  //  }
-  //}
+const store = useReservationsStore();
+const confirm = useConfirm();
+const toast = useToast();
 
-  props.handleSubmit({
-    date: toReservationDate(selectedDateRef.value),
-    time: selectedTime.value as TimeSlot,
+const updateReservation = async () => {
+  console.log({
+    selectedDate: selectedDateRef.value,
+    selectedTime: selectedTime.value,
+  });
+  store
+    .update(props.item.reservation.id, {
+      date: toReservationDate(selectedDateRef.value),
+      time: selectedTime.value as TimeSlot,
+    })
+    .then(() => {
+      toast.add({
+        severity: "success",
+        summary: "Record updated",
+      });
+      props.close();
+    });
+};
+
+const deleteReservation = () => {
+  confirm.require({
+    modal: true,
+    message: "Do you want to delete this record?",
+    header: "Danger Zone",
+    icon: "pi pi-info-circle",
+    rejectLabel: "Cancel",
+    rejectProps: {
+      label: "Cancel",
+      severity: "secondary",
+      outlined: true,
+    },
+    acceptProps: {
+      label: "Delete",
+      severity: "danger",
+    },
+    accept: () => {
+      store.delete(props.item.reservation.id).then(() => {
+        toast.add({ severity: "success", summary: "Record deleted" });
+        props.close();
+      });
+    },
+    target: confirmDeleteDialog.value,
   });
 };
 </script>
@@ -97,7 +133,7 @@ const updateReservation = async () => {
             name="reservationDate"
             class="w-150px"
             date-format="dd/mm/yy"
-            :min-date="new Date(new Date().setHours(0, 0, 0))"
+            :min-date="new Date()"
             v-model="selectedDateRef"
             required
           />
@@ -113,7 +149,6 @@ const updateReservation = async () => {
           name="selectedTime"
           placeholder="Select a time slot"
           v-model="selectedTime"
-          :value="selectedTime"
           required
           ><template #value="slotProps">
             <div v-if="slotProps.value" class="flex">
@@ -146,6 +181,7 @@ const updateReservation = async () => {
         severity="danger"
         icon="pi pi-trash"
         iconPos="right"
+        @click="deleteReservation()"
       />
     </div>
   </div>

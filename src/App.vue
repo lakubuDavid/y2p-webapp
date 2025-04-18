@@ -7,6 +7,7 @@ import SignupPage from "./pages/SignupPage.vue";
 
 <template>
   <Toast />
+  <ConfirmDialog />
   <RouterView />
 </template>
 

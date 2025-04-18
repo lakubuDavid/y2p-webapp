@@ -2,11 +2,7 @@
 //@ts-ignore
 import { capitalize, computed, ref } from "vue";
 //@ts-ignore
-import {
-  formatReservationDate,
-  type Reservation,
-  type ReservationRecord,
-} from "../../lib/types";
+import { toDate, type Reservation, type ReservationRecord } from "@lib/types";
 //import ShowReservationDialog from "./dialog/ShowReservationDialog.vue";
 //import EditReservationDialog from "./dialog/EditReservationDialog.vue";
 
@@ -15,12 +11,14 @@ const props = defineProps<{
   handleUpdate: (values: Partial<Reservation>) => Promise<any>;
 }>();
 
+console.log(props.item);
+
 const showInfo = ref(false);
 const showEdit = ref(false);
 
 //@ts-ignore
 const date = computed(() => {
-  const _date = formatReservationDate(props.item.reservation.date);
+  const _date = toDate(props.item.reservation.date);
 
   return _date;
 });
@@ -47,28 +45,14 @@ const onEditClick = (ev: Event) => {
 //console.log(props.item);
 </script>
 <template lang="">
-  <div>
-    <!-- <Card class="margin-5"> -->
-    <!-- <template #content> -->
-    <!-- <div class="list-item"> -->
-    <div class="row">
-      <span>
-        <strong>Owner : </strong>
-        {{ `${item.user.name} ${item.user.surname}` }}</span
-      >
-      <span>
-        <strong>Date : </strong>
-        {{ date.toLocaleDateString() }}</span
-      >
-    </div>
-    <div class="row">
-      <span
-        ><strong>Specie : </strong> {{ capitalize(item.pet.specie) }}
-        <FaIcon :icon="`fa-${icon}`" />
-      </span>
-      <span> <strong>Name : </strong> {{ item.pet.name }}</span>
-      <span
-        ><Tag
+  <div class="flex flex-row items-center gap-10px">
+    <div class="column gap-10px grow-1">
+      <!-- <Card class="margin-5"> -->
+      <!-- <template #content> -->
+      <!-- <div class="list-item"> -->
+      <div class="row">
+        <h3>Reservation #{{ item.reservation.reservationNumber }}</h3>
+        <Tag
           :severity="
             item.reservation.status == 'oncoming'
               ? 'contrast'
@@ -83,8 +67,53 @@ const onEditClick = (ev: Event) => {
                       : 'secondary'
           "
           :value="item.reservation.status"
-        ></Tag
-      ></span>
+        ></Tag>
+      </div>
+      <div class="row gap-20px">
+        <span>
+          <strong>Owner : </strong>
+          {{ `${item.user.name} ${item.user.surname}` }}</span
+        >
+      </div>
+      <div class="row gap-20px">
+        <span class="min-w-200px">
+          <strong>Date : </strong>
+          {{ date.toLocaleDateString() }}</span
+        >
+        <span class="min-w-200px">
+          <strong>Time : </strong>
+          {{ item.reservation.time.from }} - {{ item.reservation.time.to }}
+        </span>
+      </div>
+      <div class="row gap-20px">
+        <span class="min-w-200px"
+          ><strong>Specie : </strong> {{ capitalize(item.pet.specie) }}
+          <FaIcon :icon="`fa-${icon}`" />
+        </span>
+        <span class="min-w-200px">
+          <strong>Name : </strong> {{ item.pet.name }}</span
+        >
+      </div>
+      <Dialog
+        v-model:visible="showInfo"
+        modal
+        header="Reservation Infos"
+        :style="{ width: '40rem' }"
+      >
+        <ShowReservationDialog :item="item" />
+      </Dialog>
+      <Dialog
+        v-model:visible="showEdit"
+        modal
+        header="Edit reservation"
+        :style="{ width: '40rem' }"
+      >
+        <EditReservationDialog
+          :item="item"
+          :handleSubmit="handleUpdate"
+          :close="() => (showEdit = false)"
+        />
+      </Dialog>
     </div>
     <div class="row">
       <Button
@@ -100,26 +129,6 @@ const onEditClick = (ev: Event) => {
         rounded
       />
     </div>
-    <Dialog
-      v-model:visible="showInfo"
-      modal
-      header="Reservation Infos"
-      :style="{ width: '40rem' }"
-    >
-      <ShowReservationDialog :item="item" />
-    </Dialog>
-    <Dialog
-      v-model:visible="showEdit"
-      modal
-      header="Edit reservation"
-      :style="{ width: '40rem' }"
-    >
-      <EditReservationDialog :item="item" :handleSubmit="handleSubmit" />
-    </Dialog>
-    <!-- </div> -->
-    <Divider />
-    <!-- </template> -->
-    <!-- </Card> -->
   </div>
 </template>
 <style scoped>

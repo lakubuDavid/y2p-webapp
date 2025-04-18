@@ -120,20 +120,22 @@ export type ApiResponse<T, E = Error> = {
 
 export type Reservation = {
   id: number;
+  reservationNumber: string;
   petId: number;
   userId: number;
   createdAt: Date; // ISO date string
   date: ReservationDate;
-  time:TimeSlot,
+  time: TimeSlot;
   status: "oncoming" | "done" | "canceled" | "reschedueld"; // assuming other statuses may exist
 };
 
 export type PetData = {
   id: number;
   name: string;
-  owner: number; // userId of the owner
+  ownerId: number; // userId of the owner
   specie: string; // could be refined to a union type if species are predefined
   createdAt: string; // ISO date string
+  metadata: Record<string, any>;
 };
 
 export type PetInfo = {
@@ -151,6 +153,14 @@ export type UserData = {
   type: "anonymous" | "staff" | "client"; // guessing another type, update as needed
 };
 
+export type StaffUserData = UserData & {
+  role: UserRoles;
+};
+
+type IdData = {
+  id: number;
+};
+
 // Optional: full object type if you want to group them together
 export type ReservationRecord = {
   reservation: Reservation;
@@ -162,16 +172,20 @@ export type ReservationResponse = {
   data: ReservationRecord[];
 };
 export type CreateReservationParams = {
-  userInfo: {
-    name: string;
-    surname: string;
-    email: string;
-    phoneNumber: string;
-  };
-  petInfo: {
-    name: string;
-    specie: string;
-  };
+  userInfo:
+    | {
+        name: string;
+        surname: string;
+        email: string;
+        phoneNumber: string;
+      }
+    | IdData;
+  petInfo:
+    | {
+        name: string;
+        specie: string;
+      }
+    | IdData;
   reservationInfo: {
     date: ReservationDate;
     time: {
@@ -180,6 +194,8 @@ export type CreateReservationParams = {
     };
   };
 };
+export type UserTypes = "staff" | "client";
+export type UserRoles = "veterinary" | "receptionist" | "admin";
 export const CreateUserSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
@@ -194,6 +210,8 @@ export const CreateUserSchema = z
       .min(7, "Phone number is too short")
       .optional()
       .or(z.literal("")),
+    type: z.enum(["staff", "client"]).default("client"),
+    role: z.enum(["veterinary", "admin", "receptionist"]).optional(),
   })
   .superRefine((data, ctx) => {
     if (!data.email && !data.phoneNumber) {
@@ -210,8 +228,30 @@ export const CreateUserSchema = z
         path: ["phoneNumber"],
       });
     }
+    if (data.type == "staff") {
+      if (!data.role) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Missing role for staff member",
+          path: ["role"],
+        });
+      }
+    }
   });
+export const AdminCreateUserSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  surname: z.string().min(1, "Surname is required"),
+  email: z.string().email("Invalid email address"),
+  phoneNumber: z
+    .string()
+    .min(7, "Phone number is too short")
+    .optional()
+    .or(z.literal("")),
+  type: z.enum(["staff", "client"]).default("client"),
+  role: z.enum(["veterinary", "admin", "receptionist"]).optional(),
+});
 export type CreateUserParams = z.infer<typeof CreateUserSchema>;
+export type AdminCreateUserParams = z.infer<typeof AdminCreateUserSchema>;
 
 const userInfoSchema = z
   .object({
@@ -264,13 +304,13 @@ export const CreateReservationSchema = z.object({
   }),
 });
 // Helper function to format the reservation date
-export function formatReservationDate(date: ReservationDate) {
+export function toDate(date: ReservationDate) {
   return new Date(Date.UTC(date.year, date.month - 1, date.day));
 }
 export function toReservationDate(date: Date): ReservationDate {
   return {
-    day: date.getUTCDate() as ValidDay,
-    month: date.getUTCMonth() as ValidMonth,
+    day: (date.getUTCDate() + 1) as ValidDay,
+    month: (date.getUTCMonth() + 1) as ValidMonth,
     year: date.getUTCFullYear(),
   };
 }

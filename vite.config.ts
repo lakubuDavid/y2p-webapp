@@ -5,6 +5,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { PrimeVueResolver } from "@primevue/auto-import-resolver";
+import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -39,4 +40,14 @@ export default defineConfig({
       ],
     }),
   ],
+  resolve:{
+    alias:{
+      '@': path.resolve(__dirname, "./"),
+      '@layouts': path.resolve(__dirname, "./src/layouts"),
+      '@pages': path.resolve(__dirname, "./src/pages"),
+      '@stores': path.resolve(__dirname, "./src/stores"),
+      '@components': path.resolve(__dirname, "./src/components"),
+      '@lib': path.resolve(__dirname, "./lib"),
+    }
+  }
 });

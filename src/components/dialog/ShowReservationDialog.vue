@@ -1,9 +1,6 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import {
-  type ReservationRecord,
-  formatReservationDate,
-} from "../../../lib/types";
+import { type ReservationRecord, toDate } from "../../../lib/types";
 
 const props = defineProps<{
   item: ReservationRecord;
@@ -27,9 +24,7 @@ const icon = computed(() => {
         </span>
         <strong>Date</strong>
         <span class="w-200"
-          >{{
-            formatReservationDate(item.reservation.date).toLocaleDateString()
-          }}
+          >{{ toDate(item.reservation.date).toLocaleDateString() }}
         </span>
       </div>
       <div class="row pad-5">

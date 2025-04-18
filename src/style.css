@@ -224,3 +224,35 @@ button:focus-visible {
   font-style: italic;
   color: #664422
 }
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.status-scheduled {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+}
+
+.status-completed {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status-canceled {
+  background-color: #ffebee;
+  color: #b71c1c;
+}
+
+.status-rescheduled {
+  background-color: #fff8e1;
+  color: #ff6f00;
+}
+
+.status-missed {
+  background-color: #f3e5f5;
+  color: #4a148c;
+}

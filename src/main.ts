@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import "./style.css";
 import "./primitives.css";
-import "virtual:uno.css"
+import "virtual:uno.css";
 import App from "./App.vue";
 import { router } from "./routes";
 // import VCalendar from "v-calendar";
@@ -9,23 +9,24 @@ import { router } from "./routes";
 // import Vue3Toastify, { toast, type ToastContainerOptions } from "vue3-toastify";
 // import "vue3-toastify/dist/index.css";
 import PrimeVue from "primevue/config";
-import ToastService from 'primevue/toastservice';
+import ToastService from "primevue/toastservice";
+import ConfirmationService from "primevue/confirmationservice";
 import "primeicons/primeicons.css";
 import Aura from "@primeuix/themes/aura";
 import { definePreset } from "@primeuix/themes";
 
 /* import the fontawesome core */
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from "@fortawesome/fontawesome-svg-core";
 
 /* import font awesome icon component */
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 /* import specific icons */
-import {faCat,faDog,faKiwiBird} from '@fortawesome/free-solid-svg-icons'
+import { faCat, faDog, faKiwiBird } from "@fortawesome/free-solid-svg-icons";
 import { createPinia } from "pinia";
 
 /* add icons to the library */
-library.add([faCat,faDog,faKiwiBird])
+library.add([faCat, faDog, faKiwiBird]);
 
 const Theme = definePreset(Aura, {
   semantic: {
@@ -77,7 +78,7 @@ const Theme = definePreset(Aura, {
 
 // Use plugin with optional defaults
 createApp(App)
-.component('FaIcon', FontAwesomeIcon)
+  .component("FaIcon", FontAwesomeIcon)
   // .use(Vue3Toastify, {
   //   autoClose: 3000,
   //   position: toast.POSITION.BOTTOM_RIGHT,
@@ -92,5 +93,6 @@ createApp(App)
     },
   })
   .use(ToastService)
+  .use(ConfirmationService)
   .use(router)
   .mount("#app");

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CreateUserParams } from "@lib/types";
+import { capitalized } from "@lib/utils";
 import { ref } from "vue";
 
 defineProps<{
@@ -12,6 +13,12 @@ const userInfo = ref({
   surname: "",
   email: "",
 });
+
+const selectedUserType = ref<"client" | "staff">();
+const selectedStaffRole = ref<"receptionist" | "admin" | "veterinary">();
+
+const userTypeOptions = ["client", "staff"];
+const staffRoles = ["receptionist", "admin", "veterinary"];
 </script>
 <template>
   <Form class="column gap-10">
@@ -51,7 +58,63 @@ const userInfo = ref({
           </FloatLabel>
         </div>
       </FieldSet>
-      <Fieldset legend="Login access" class="pad-15"> </Fieldset>
+      <Fieldset legend="Role & Access" class="pad-15px">
+        <div class="column gap-10px">
+          <label for="userType">User Type</label>
+          <Select
+            name="userType"
+            id="userType"
+            class="w-250px"
+            placeholder="Select the user type"
+            :options="userTypeOptions"
+            v-model="selectedUserType"
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="flex">
+                <div>{{ capitalized(slotProps.value) }}</div>
+              </div>
+              <span v-else>
+                {{ slotProps.placeholder }}
+              </span>
+            </template>
+
+            <template #option="slotProps">
+              <div class="flex">
+                {{ capitalized(slotProps.option) }}
+              </div>
+            </template></Select
+          >
+          <label
+            for="userRole"
+            v-if="selectedUserType && selectedUserType == 'staff'"
+            >Staff Role</label
+          >
+          <Select
+            name="userRole"
+            id="userRole"
+            class="w-250px"
+            placeholder="Select the staff role"
+            :options="staffRoles"
+            v-model="selectedStaffRole"
+            v-if="selectedUserType && selectedUserType == 'staff'"
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="flex">
+                <div>{{ capitalized(slotProps.value) }}</div>
+              </div>
+              <span v-else>
+                {{ slotProps.placeholder }}
+              </span>
+            </template>
+
+            <template #option="slotProps">
+              <div class="flex">
+                {{ capitalized(slotProps.option) }}
+              </div>
+            </template>
+          </Select>
+        </div>
+      </Fieldset>
     </div>
     <div class="row gap-10">
       <Button label="Submit" type="submit" />

@@ -1,3 +1,4 @@
+import { useToast } from "primevue/usetoast";
 import type { User, UserCredentials } from "./types";
 import { create } from "apisauce";
 
@@ -12,13 +13,19 @@ export const api = create({
 });
 
 api.addMonitor((response) => {
+  const toast = useToast();
   if (response.status == 401) {
-    // const toast = useToast();
-    // toast.add({ severity: "error", summary: "Session expired" });
     console.log("401 error:", response);
   }
   if (response.status == 500) {
     console.log("500 error:", response);
+  }
+  if (!response.ok) {
+    toast.add({
+      severity: "error",
+      summary: "Api Client Error",
+      detail: response.originalError.message,
+    });
   }
 });
 

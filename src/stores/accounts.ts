@@ -1,11 +1,18 @@
 import { defineStore } from "pinia";
-import type { ApiResponse, UserData } from "../../lib/types";
+import type {
+  ApiResponse,
+  CreateUserParams,
+  StaffUserData,
+  UserData,
+} from "../../lib/types";
 import { ref } from "vue";
 import { api } from "../../lib/client";
 import { useAuth } from "../states/auth";
+import { useToast } from "primevue/usetoast";
 
 export const useAccountsStore = defineStore("accounts", () => {
   const auth = useAuth();
+  const toast = useToast()
 
   const MAX_TRIES = 3;
   const accounts = ref<UserData[]>();
@@ -30,7 +37,7 @@ export const useAccountsStore = defineStore("accounts", () => {
         }
         if (status == 401) {
           const result = await auth.refreshToken();
-          console.log("resullt",result);
+          console.log("resullt", result);
         }
         fetchAccounts((currentTry ?? 0) + 1);
       }
@@ -39,11 +46,49 @@ export const useAccountsStore = defineStore("accounts", () => {
     }
   };
 
+  async function createUser(
+    info: CreateUserParams,
+    errHandler?: (err: Error) => any,
+  ) {
+    try {
+      const { data, ok, originalError } = await api.post("/admin/users", info, {
+        withCredentials: true,
+      });
+
+      if (!ok) {
+        if (errHandler) errHandler(originalError);
+        toast.add({
+          severity:'error',
+          summary:"An error occured whille creating new user",
+          detail:originalError.message
+        })
+        return { success: false, error: originalError };
+      }
+      const apiResponse = data as ApiResponse<StaffUserData>;
+      if (apiResponse.error) {
+        if (errHandler) errHandler(apiResponse.error);
+        toast.add({
+          severity:'error',
+          summary:"An error occured whille creating new user",
+          detail:apiResponse.message ?? apiResponse.error.message
+        })
+        return { success: false, error: error};
+      }
+
+        toast.add({
+          severity:'success',
+          summary:"Done !",
+          detail:`A link to login as been sent to ${info.email}`
+        })
+    } catch (err) {}
+  }
+
   fetchAccounts();
 
   return {
     accounts,
     error,
     refresh: fetchAccounts,
+    create: createUser,
   };
 });

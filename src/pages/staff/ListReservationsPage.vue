@@ -9,6 +9,7 @@ import { useToast } from "primevue/usetoast";
 import { useReservationsStore } from "../../stores/reservations";
 import { storeToRefs } from "pinia";
 import type { CreateReservationParams } from "@lib/types";
+import CreateReservationDialog from "@components/dialog/CreateReservationDialog.vue";
 const toast = useToast();
 //const router = useRouter();
 
@@ -40,26 +41,8 @@ const { refresh: fetchReservations } = store;
               @click="fetchReservations()"
               text
             />
-            <!-- <IconField> -->
-            <!-- <InputIcon> -->
-            <!-- <i class="pi pi-search" /> -->
-            <!-- </InputIcon> -->
-            <!-- <InputText class="w-400" placeholder="Search" /> -->
-            <!-- </IconField> -->
-            <!-- <Button icon="pi pi-search" severity="secondary" text /> -->
           </template>
         </Toolbar>
-        <!-- <div class="row gap-10"> -->
-        <!-- <Button @click="showNewReservationDialog = true" label="New" /> -->
-        <!-- <Button -->
-        <!-- variant="outlined" -->
-        <!-- icon="pi pi-refresh" -->
-        <!-- iconPos="right" -->
-        <!-- @click="fetchReservations()" -->
-        <!-- label="Refresh" -->
-        <!-- /> -->
-        <!-- </div> -->
-        <!-- <Divider /> -->
         <div>
           <Dialog
             v-model:visible="showNewReservationDialog"
@@ -67,7 +50,36 @@ const { refresh: fetchReservations } = store;
             header="New Reservation"
             :style="{ width: '40rem' }"
           >
-            <NewReservationDialog
+            <!-- <NewReservationDialog -->
+            <!-- :handle-cancel=" -->
+            <!-- () => { -->
+            <!-- showNewReservationDialog = false; -->
+            <!-- } -->
+            <!-- " -->
+            <!-- :handleSubmit=" -->
+            <!-- (data: CreateReservationParams) => { -->
+            <!-- store -->
+            <!-- .create(data, (err) => { -->
+            <!-- toast.add({ -->
+            <!-- severity: 'error', -->
+            <!-- life: 5000, -->
+            <!-- summary: `Reservation error : ${err}`, -->
+            <!-- }); -->
+            <!-- }) -->
+            <!-- .then(({ error }) => { -->
+            <!-- console.log('done'); -->
+            <!-- if (!error) { -->
+            <!-- toast.add({ -->
+            <!-- severity: 'success', -->
+            <!-- life: 5000, -->
+            <!-- summary: 'Done !', -->
+            <!-- }); -->
+            <!-- } -->
+            <!-- }); -->
+            <!-- } -->
+            <!-- " -->
+            <!-- /> -->
+            <CreateReservationDialog
               :handle-cancel="
                 () => {
                   showNewReservationDialog = false;
@@ -84,6 +96,7 @@ const { refresh: fetchReservations } = store;
                       });
                     })
                     .then(({ error }) => {
+                      console.log('done');
                       if (!error) {
                         toast.add({
                           severity: 'success',
@@ -95,36 +108,6 @@ const { refresh: fetchReservations } = store;
                 }
               "
             />
-            <!-- <NewReservationDialog -->
-            <!-- :handle-cancel=" -->
-            <!-- () => { -->
-            <!-- showNewReservationDialog = false; -->
-            <!-- } -->
-            <!-- " -->
-            <!-- :handleSubmit=" -->
-            <!-- async (data: CreateReservationParams) => { -->
-            <!-- const response = await api.post('/reservation', data); -->
-            <!-- if (response.ok) { -->
-            <!-- toast.add({ -->
-            <!-- severity: 'success', -->
-            <!-- summary: 'Reservation done!', -->
-            <!-- life: 5000, -->
-            <!-- }); -->
-            <!-- showNewReservationDialog = false; -->
-            <!-- } else { -->
-            <!-- toast.add({ -->
-            <!-- severity: 'error', -->
-            <!-- life: 5000, -->
-            <!-- summary: `Reservation error : ${ -->
-            <!-- (response.data as ApiResponse<any>).error || -->
-            <!-- response.problem -->
-            <!-- }`, -->
-            <!-- }); -->
-            <!-- } -->
-            <!-- console.log(response.data); -->
-            <!-- } -->
-            <!-- " -->
-            <!-- /> -->
           </Dialog>
           <DataView
             :value="reservationsRef"
@@ -139,9 +122,30 @@ const { refresh: fetchReservations } = store;
                 class="pad-y-10"
                 :key="index"
               >
+                <!-- @ts-ignore -->
                 <ReservationListItem
                   :item="item"
-                  :handleUpdate="(values) => store.update(item.id, values)"
+                  :handleUpdate="
+                    async (values: any) => {
+                      await store
+                        .update(item.reservation.id, values, (error) => {
+                          toast.add({
+                            severity: 'danger',
+                            life: 5000,
+                            summary: `Reservation update error : ${error.message}`,
+                          });
+                        })
+                        .then(({ error }) => {
+                          if (!error) {
+                            toast.add({
+                              severity: 'success',
+                              life: 5000,
+                              summary: 'Done !',
+                            });
+                          }
+                        });
+                    }
+                  "
                 />
               </div>
             </template>
