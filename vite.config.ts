@@ -5,7 +5,7 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { PrimeVueResolver } from "@primevue/auto-import-resolver";
-import path from "path"
+import path from "node:path"
 
 
 // https://vite.dev/config/
