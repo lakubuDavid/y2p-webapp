@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Layout from "../../layouts/staff.vue";
 import ReservationListItem from "../../components/ReservationListItem.vue";
-import NewReservationDialog from "../../components/dialog/NewReservatioDialog.vue";
 import { ref } from "vue";
 //import { api } from "../../../lib/client";
 //import type { ApiResponse, CreateReservationParams } from "../../../lib/types";

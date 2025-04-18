@@ -4,10 +4,10 @@ import { api } from "../../lib/client";
 import type { ApiResponse, ReservationRecord } from "../../lib/types";
 import { toDate } from "@lib/types";
 import Layout from "@layouts/accessform.vue";
-import { useRoute } from "vue-router";
+import { useRoute, type LocationQueryValue } from "vue-router";
 
 const route = useRoute();
-const queryNumber = route.query["number"];
+const queryNumber = (route.query["number"] as LocationQueryValue)?.toString();
 
 const reservationNumber = ref(queryNumber ?? "");
 const reservation = ref<ReservationRecord | null>(null);

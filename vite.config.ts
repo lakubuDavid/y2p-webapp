@@ -7,6 +7,8 @@ import Components from "unplugin-vue-components/vite";
 import { PrimeVueResolver } from "@primevue/auto-import-resolver";
 import path from "path"
 
+const currentDir = import.meta.dir;
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -42,12 +44,12 @@ export default defineConfig({
   ],
   resolve:{
     alias:{
-      '@': path.resolve(__dirname, "./"),
-      '@layouts': path.resolve(__dirname, "./src/layouts"),
-      '@pages': path.resolve(__dirname, "./src/pages"),
-      '@stores': path.resolve(__dirname, "./src/stores"),
-      '@components': path.resolve(__dirname, "./src/components"),
-      '@lib': path.resolve(__dirname, "./lib"),
+      '@': path.resolve(currentDir, "./"),
+      '@layouts': path.resolve(currentDir, "./src/layouts"),
+      '@pages': path.resolve(currentDir, "./src/pages"),
+      '@stores': path.resolve(currentDir, "./src/stores"),
+      '@components': path.resolve(currentDir, "./src/components"),
+      '@lib': path.resolve(currentDir, "./lib"),
     }
   }
 });
