@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import Layout from "../../layouts/staff.vue";
-// import type { ApiResponse, UserData } from "../../../lib/types";
-// import { api } from "../../../lib/client";
 import { useToast } from "primevue/usetoast";
-// import { useAuth } from "../../states/auth";
 import { useAccountsStore } from "../../stores/accounts";
 import { storeToRefs } from "pinia";
-import type { CreateUserParams, UserData } from "@lib/types";
-//import { api } from "../../../lib/client";
+import type { CreateUserParams, UserData } from "../../models/user";
 
 const toast = useToast();
 const store = useAccountsStore();

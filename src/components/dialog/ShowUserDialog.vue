@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import type { UserData, StaffUserData } from "@lib/types";
+import type { StaffUserData, UserData } from "../../models/user";
 
 const props = defineProps<{
   item: UserData | StaffUserData;

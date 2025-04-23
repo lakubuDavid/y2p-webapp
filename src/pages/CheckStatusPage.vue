@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { api } from "../../lib/client";
-import type { ApiResponse, ReservationRecord } from "../../lib/types";
+import type { ApiResponse } from "../../lib/types";
 import { toDate } from "@lib/types";
 import Layout from "@layouts/accessform.vue";
 import { useRoute, type LocationQueryValue } from "vue-router";
+import type { ReservationRecord } from "../models/reservation";
 
 const route = useRoute();
 const queryNumber = (route.query["number"] as LocationQueryValue)?.toString();
