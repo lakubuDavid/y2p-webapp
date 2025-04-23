@@ -11,8 +11,6 @@ const props = defineProps<{
   handleUpdate: (values: Partial<Reservation>) => Promise<any>;
 }>();
 
-console.log(props.item);
-
 const showInfo = ref(false);
 const showEdit = ref(false);
 
@@ -116,6 +114,10 @@ const onEditClick = (ev: Event) => {
       </Dialog>
     </div>
     <div class="row">
+      <span class="color-red" v-if="!item.assignee">
+        <span class="pi pi-exclamation-triangle"></span>
+        Not Assigned
+      </span>
       <Button
         icon="pi pi-eye"
         severity="secondary"

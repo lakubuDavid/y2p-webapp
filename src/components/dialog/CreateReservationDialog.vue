@@ -1,27 +1,25 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { api } from "../../../lib/client";
-import type {
-  CreateReservationParams,
-  PetData,
-  UserData,
-  ApiResponse,
-  TimeSlot,
-} from "../../../lib/types";
+import type { ApiResponse, TimeSlot } from "../../../lib/types";
 import { toReservationDate } from "../../../lib/types";
 import { AvailableTimeSlots } from "../../constants";
 import { useToast } from "primevue/usetoast";
+import type { CreateReservationParams } from "../../models/reservation";
+import type { UserData } from "../../models/user";
+import type { PetData } from "../../models/pet";
+import { useReservationsStore } from "@stores/reservations";
 
 const toast = useToast();
+const store = useReservationsStore();
 
 const props = defineProps<{
-  handleSubmit: (data: CreateReservationParams) => void;
-  handleCancel: () => void;
+  close: () => void;
 }>();
 const selectedTime = ref<{ from: string; to: string }>();
 
 const slots = AvailableTimeSlots as TimeSlot[];
-const slotsRef = ref<TimeSlot[]>(slots);
+const availableSlots = ref<TimeSlot[]>(slots);
 // Form data
 const userInfo = ref({
   name: "",
@@ -41,15 +39,27 @@ const reservationInfo = ref({
     from: "",
     to: "",
   },
+  service: "",
 });
+
+const services = [
+  { label: "Grooming", value: "grooming" },
+  { label: "Consultation", value: "consultation" },
+  { label: "Vaccination", value: "vaccination" },
+];
+const speciesOptions = [
+  { label: "Cat", value: "cat" },
+  { label: "Dog", value: "dog" },
+  { label: "Bird", value: "bird" },
+  { label: "Other", value: "other" },
+];
+const otherSpecie = ref<string>();
+
+const errors = ref<string[]>([]);
 
 // Replace toggle boolean refs with string option refs
 const userCreationMode = ref<"new" | "existing">("new"); // options: 'new' or 'existing'
 const petCreationMode = ref<"new" | "existing">("new"); // options: 'new' or 'existing'
-
-// For existing selection
-const useExistingUser = ref(false);
-const useExistingPet = ref(false);
 
 // Available data from API
 const existingUsers = ref<UserData[]>([]);
@@ -153,6 +163,10 @@ const loadUserPets = () => {
 
 watch(selectedUser, loadUserPets);
 
+const onDateSelect = async (date: Date) => {
+  availableSlots.value = (await store.getAvailableSlots(date)) ?? [];
+};
+
 // Handle user selection
 const onUserSelect = (user: UserData) => {
   selectedUser.value = user;
@@ -175,30 +189,81 @@ const onPetSelect = (pet: PetData) => {
 
 // Handle form submission
 const onSubmit = () => {
+  errors.value = [];
+
+  // Input validation
+  if (userCreationMode.value == "existing" && !selectedUser.value) {
+    errors.value.push("Please select the existing owner");
+  } else if (userCreationMode.value == "new") {
+    if (!userInfo.value.email && !userInfo.value.phoneNumber) {
+      errors.value.push(
+        "Please specify either the phone number or emaill address",
+      );
+    }
+    userInfo.value.name == "" &&
+      errors.value.push("Please specify the owner's name");
+    userInfo.value.surname == "" &&
+      errors.value.push("Please specify the owner's surname");
+  }
+  if (petCreationMode.value == "existing" && !selectedPet.value) {
+    errors.value.push("Please select the existing pet");
+  }
+  if (petInfo.value.specie == "other") {
+    if (!otherSpecie.value || otherSpecie.value == "") {
+      errors.value.push("Please specify the pet specie");
+    }
+  }
   if (!selectedTime.value) {
     toast.add({
       severity: "error",
       summary: "Info required",
-      detail: "Reservation TIme not specified",
+      detail: "Reservation Time not specified",
     });
+    errors.value.push("Please select the reservation time");
     return;
   }
   const formData: CreateReservationParams = {
     userInfo:
-      useExistingUser.value && selectedUser.value
+      userCreationMode.value == "existing" && selectedUser.value
         ? { id: selectedUser.value.id }
         : userInfo.value,
     petInfo:
-      useExistingPet.value && selectedPet.value
+      petCreationMode.value == "existing" && selectedPet.value
         ? { id: selectedPet.value.id }
         : petInfo.value,
     reservationInfo: {
       date: toReservationDate(reservationInfo.value.date),
       time: selectedTime.value,
+      service: reservationInfo.value.service,
     },
   };
 
-  props.handleSubmit(formData);
+  if (!("id" in formData.petInfo) && formData.petInfo.specie == "other") {
+    formData.petInfo.specie = otherSpecie.value ?? "";
+  }
+
+  if (errors.value.length > 0) return;
+
+  store
+    .create(formData, (err) => {
+      toast.add({
+        severity: "error",
+        life: 5000,
+        summary: `Reservation error `,
+        detail: `${err.message}`,
+      });
+    })
+    .then(({ error }) => {
+      console.log("done");
+      if (!error) {
+        toast.add({
+          severity: "success",
+          life: 5000,
+          summary: "Done !",
+        });
+        props.close();
+      }
+    });
 };
 
 onMounted(() => {
@@ -209,9 +274,14 @@ onMounted(() => {
 
 <template>
   <form @submit.prevent="onSubmit" class="p-fluid">
+    <Message v-if="errors.length > 0" severity="error">
+      <ul>
+        <li v-for="error in errors">{{ error }}</li>
+      </ul>
+    </Message>
     <!-- User Information Section -->
     <Fieldset legend="User Information">
-      <div class="mb-3">
+      <div class="mb-2">
         <SelectButton
           v-model="userCreationMode"
           :options="[
@@ -225,29 +295,12 @@ onMounted(() => {
           :allow-empty="false"
           optionLabel="label"
           optionValue="value"
-          class="w-full"
+          class="w-full justify-center"
         />
       </div>
 
       <div v-if="userCreationMode == 'existing'">
-        <div class="field mb-4">
-          <label for="userSearch">Search Users</label>
-          <div class="p-inputgroup w-full">
-            <InputText
-              id="userSearch"
-              v-model="userSearchTerm"
-              placeholder="Search by name, email or phone"
-              :loading="loadingUsers"
-            />
-            <Button
-              icon="pi pi-search"
-              class="p-button-secondary"
-              @click="filterUsers"
-            />
-          </div>
-        </div>
-
-        <div class="field">
+        <div class="field column gap-15px">
           <label for="userSelect">Select User</label>
           <Select
             id="userSelect"
@@ -255,7 +308,7 @@ onMounted(() => {
             :options="filteredUsers"
             optionLabel="name"
             placeholder="Select a user"
-            class="w-full"
+            class="w-300px"
             :loading="loadingUsers"
             :filter="true"
             filterPlaceholder="Search users"
@@ -282,26 +335,27 @@ onMounted(() => {
           </Select>
         </div>
       </div>
-      <div v-else>
-        <div class="field">
-          <label for="name">First Name</label>
-          <InputText id="name" v-model="userInfo.name" required />
-        </div>
+      <div v-else class="column">
+        <div class="row">
+          <FloatLabel variant="in" class="field">
+            <label for="name">First Name</label>
+            <InputText id="name" v-model="userInfo.name" required />
+          </FloatLabel>
 
-        <div class="field">
-          <label for="surname">Last Name</label>
-          <InputText id="surname" v-model="userInfo.surname" required />
+          <FloatLabel variant="in" class="field gap-1px">
+            <label for="surname">Last Name</label>
+            <InputText id="surname" v-model="userInfo.surname" required />
+          </FloatLabel>
         </div>
-
-        <div class="field">
+        <FloatLabel variant="in" class="field gap-15px">
           <label for="email">Email</label>
           <InputText id="email" v-model="userInfo.email" type="email" />
-        </div>
+        </FloatLabel>
 
-        <div class="field">
+        <FloatLabel variant="in" class="field gap-15px">
           <label for="phoneNumber">Phone Number</label>
           <InputText id="phoneNumber" v-model="userInfo.phoneNumber" />
-        </div>
+        </FloatLabel>
       </div>
     </Fieldset>
 
@@ -321,30 +375,12 @@ onMounted(() => {
           :allow-empty="false"
           optionLabel="label"
           optionValue="value"
-          class="w-full"
+          class="w-full justify-center"
         />
       </div>
 
       <div v-if="petCreationMode == 'existing'">
-        <div class="field mb-4">
-          <label for="petSearch">Search Pets</label>
-          <div class="p-inputgroup w-full">
-            <InputText
-              id="petSearch"
-              v-model="petSearchTerm"
-              placeholder="Search by name or species"
-              :loading="loadingPets"
-              class="w-300px"
-            />
-            <Button
-              icon="pi pi-search"
-              class="p-button-secondary"
-              @click="filterPets"
-            />
-          </div>
-        </div>
-
-        <div class="field">
+        <div class="field column gap-15px">
           <label for="petSelect">Select Pet</label>
           <Select
             id="petSelect"
@@ -352,7 +388,7 @@ onMounted(() => {
             :options="filteredPets"
             optionLabel="name"
             placeholder="Select a pet"
-            class="w-full"
+            class="w-300px"
             :loading="loadingPets"
             :filter="true"
             filterPlaceholder="Search pets"
@@ -378,28 +414,65 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-else>
-        <div class="field">
+      <div v-else class="column gap-15px">
+        <FloatLabel variant="in" class="pad-15px">
           <label for="petName">Pet Name</label>
           <InputText id="petName" v-model="petInfo.name" required />
-        </div>
+        </FloatLabel>
 
-        <div class="field">
-          <label for="specie">Species</label>
-          <InputText id="specie" v-model="petInfo.specie" required />
+        <div class="column">
+          <Select
+            :options="speciesOptions"
+            class="w-300px"
+            id="specie"
+            name="specie"
+            placeholder="Select your pet specie"
+            v-model="petInfo.specie"
+            optionLabel="label"
+            optionValue="value"
+            required
+          />
+          <FloatLabel
+            variant="in"
+            v-if="petInfo.specie == 'other'"
+            class="column gap-15px pad-10px"
+          >
+            <label for="otherSpecie">Specify Specie</label>
+            <InputText id="otherSpecie" v-model="otherSpecie" required />
+          </FloatLabel>
         </div>
       </div>
     </Fieldset>
 
     <!-- Reservation Information Section -->
     <Fieldset legend="Reservation Details" class="mt-4">
+      <div class="pad-5 column">
+        <label for="service">Service</label>
+        <Select
+          :options="services"
+          class="w-300px"
+          id="service"
+          name="service"
+          placeholder="Select a service"
+          optionValue="value"
+          optionLabel="label"
+          required
+          v-model="reservationInfo.service"
+        />
+      </div>
       <div class="field">
         <label for="date">Date</label>
-        <Calendar
+        <DatePicker
           id="date"
           v-model="reservationInfo.date"
           dateFormat="dd/mm/yy"
+          :min-date="new Date()"
           required
+          @value-change="
+            (v) => {
+              if (v instanceof Date) onDateSelect(v);
+            }
+          "
         />
       </div>
 
@@ -407,7 +480,7 @@ onMounted(() => {
         <label class="pad-5" for="selectedTime">Time</label>
         <!-- <div class="row"> -->
         <Select
-          :options="slotsRef"
+          :options="availableSlots"
           class="w-300px"
           id="selectedTime"
           name="selectedTime"
@@ -437,7 +510,7 @@ onMounted(() => {
         type="button"
         label="Cancel"
         class="p-button-secondary"
-        @click="handleCancel"
+        @click="close"
       />
       <Button type="submit" label="Create Reservation" />
     </div>

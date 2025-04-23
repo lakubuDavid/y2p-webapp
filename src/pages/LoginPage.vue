@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import Layout from "../layouts/accessform.vue";
-import { useAuth } from "../states/auth";
+import { useAuthStore } from "../stores/auth";
 import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
@@ -10,9 +10,10 @@ const form = defineModel<{ email: string; password: string }>("form", {
   default: { email: "", password: "" },
 });
 const router = useRouter();
+const store = useAuthStore();
 const submit = async (ev: Event) => {
   ev.preventDefault();
-  const { error } = await useAuth().login(
+  const { error } = await store.login(
     form.value?.email ?? "",
     form.value?.password ?? "",
   );

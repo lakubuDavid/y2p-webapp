@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useUserStore } from "@stores/user";
 import type { MenuItem } from "primevue/menuitem";
 import { useRouter } from "vue-router";
 const router = useRouter();
+const { signout } = useUserStore();
 const menuItems: MenuItem[] = [
   {
     label: "Home",
@@ -30,7 +32,12 @@ const menuItems: MenuItem[] = [
   },
   { separator: true },
   { label: "My Account" },
-  { label: "Signout" },
+  {
+    label: "Signout",
+    command: () => {
+      signout();
+    },
+  },
 ];
 </script>
 <template>

@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import { useUserStore } from "@stores/user";
+
+const store = useUserStore();
+</script>
 <template>
   <div class="navbar">
     <nav>
@@ -8,7 +13,7 @@
         <li>
           <RouterLink to="/check_reservation">Check reservation</RouterLink>
         </li>
-        <li>
+        <li v-if="store.currentUser?.type === 'staff'">
           <RouterLink to="/staff/account">Staff Section</RouterLink>
         </li>
       </ul>

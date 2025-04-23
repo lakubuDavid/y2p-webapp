@@ -1,10 +1,6 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-export type ReservationSlotType = {
-  from: string;
-  to: string;
-};
-export type ReservationSlotsType = ReservationSlotType[];
+import type { ReservationSlotsType } from "../models/reservation";
 const props = defineProps({
   slots: {
     type: Array as () => ReservationSlotsType,

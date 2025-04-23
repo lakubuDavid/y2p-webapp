@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useAuth } from "../states/auth";
 import Dropdown from "./Dropdown.vue";
 import DropdownItem from "./DropdownItem.vue";
 import { useRouter } from "vue-router";
@@ -8,10 +7,9 @@ import { useCookies } from "@vueuse/integrations/useCookies";
 import { useUserStore } from "../stores/user";
 import { storeToRefs } from "pinia";
 
-const auth = useAuth();
 //const { user } = auth.credentials.value;
 const store = useUserStore();
-const { user } = storeToRefs(store);
+const { currentUser: user } = storeToRefs(store);
 
 store.refresh();
 
@@ -28,9 +26,9 @@ const myAccountClick = () => {
   console.log(cookies.get("__refresh_token"));
 };
 const signOutClick = async () => {
-  const response = await auth.signOut();
+  await store.signout();
   //  router.push(router.currentRoute.value.path);
-  if (response?.ok) {
+  if (!store.error) {
     router.go(0);
   }
 };

@@ -1,20 +1,16 @@
 <script lang="ts" setup>
 import { useConfirm } from "primevue/useconfirm";
 import { computed, ref } from "vue";
-import {
-  toDate,
-  toReservationDate,
-  type Reservation,
-  type ReservationRecord,
-  type TimeSlot,
-} from "../../../lib/types";
+import { toDate, toReservationDate, type TimeSlot } from "../../../lib/types";
 import { AvailableTimeSlots } from "../../constants";
 import { useReservationsStore } from "@stores/reservations";
 import { useToast } from "primevue/usetoast";
+import type { Reservation, ReservationRecord } from "../../models/reservation";
+import { useStaffStore, type StaffData } from "@stores/staff";
+import { storeToRefs } from "pinia";
 
-const confirmDeleteDialog = ref<HTMLElement>();
-
-const slots = AvailableTimeSlots;
+const { refresh: getStaffMembers } = useStaffStore();
+const { staffMembers } = storeToRefs(useStaffStore());
 const props = defineProps<{
   item: ReservationRecord;
   handleSubmit: <T>(values: Partial<Reservation>) => Promise<T>;
@@ -28,10 +24,36 @@ const icon = computed(() => {
 });
 const selectedDateRef = ref(toDate(props.item.reservation.date));
 const selectedTime = ref<TimeSlot>(props.item.reservation.time);
+const availableTimeSlots = ref<TimeSlot[]>(AvailableTimeSlots as TimeSlot[]);
+const timeSlotsOptions = computed(() => {
+  return availableTimeSlots.value.map((slot: TimeSlot) => {
+    return { label: `${slot.from} - ${slot.to}`, value: slot };
+  });
+});
+
+const availableAssignee = ref<StaffData[]>(staffMembers.value);
+const availableAssigneeOptions = computed(() => {
+  return availableAssignee.value
+    .filter((v) => v.role == "veterinary")
+    .map((v) => {
+      return {
+        label: `${v.user?.name} (${v.user?.email})`,
+        value: v.userId,
+      };
+    });
+});
+const selectedAssignee = ref<number>(props.item.reservation.assigneeId);
 
 const store = useReservationsStore();
 const confirm = useConfirm();
 const toast = useToast();
+
+const getAvailableSlots = async () => {
+  availableTimeSlots.value = [
+    ...((await store.getAvailableSlots(selectedDateRef.value)) || []),
+    selectedTime.value,
+  ];
+};
 
 const updateReservation = async () => {
   console.log({
@@ -42,6 +64,24 @@ const updateReservation = async () => {
     .update(props.item.reservation.id, {
       date: toReservationDate(selectedDateRef.value),
       time: selectedTime.value as TimeSlot,
+      assigneeId: selectedAssignee.value,
+    })
+    .then(() => {
+      toast.add({
+        severity: "success",
+        summary: "Record updated",
+      });
+      props.close();
+    });
+};
+const markAsDone = async (value: boolean) => {
+  console.log({
+    selectedDate: selectedDateRef.value,
+    selectedTime: selectedTime.value,
+  });
+  store
+    .update(props.item.reservation.id, {
+      status: value ? "done" : "oncoming",
     })
     .then(() => {
       toast.add({
@@ -74,9 +114,36 @@ const deleteReservation = () => {
         props.close();
       });
     },
-    target: confirmDeleteDialog.value,
   });
 };
+const cancelReservation = () => {
+  confirm.require({
+    modal: true,
+    message: "Do you want to cancel this reservation ?",
+    header: "Danger Zone",
+    icon: "pi pi-info-circle",
+    rejectLabel: "Cancel",
+    rejectProps: {
+      label: "Cancel",
+      severity: "secondary",
+      outlined: true,
+    },
+    acceptProps: {
+      label: "Delete",
+      severity: "danger",
+    },
+    accept: () => {
+      store
+        .update(props.item.reservation.id, { status: "canceled" })
+        .then(() => {
+          toast.add({ severity: "success", summary: "Record deleted" });
+          props.close();
+        });
+    },
+  });
+};
+getAvailableSlots();
+getStaffMembers();
 </script>
 <template>
   <div>
@@ -135,47 +202,66 @@ const deleteReservation = () => {
             date-format="dd/mm/yy"
             :min-date="new Date()"
             v-model="selectedDateRef"
+            @value-change="() => getAvailableSlots()"
             required
           />
         </FloatLabel>
       </div>
-      <div class="pad-5 column">
+      <div class="pad-5 row">
         <label class="pad-5" for="selectedTime">Time</label>
         <!-- <div class="row"> -->
         <Select
-          :options="slots"
+          :options="timeSlotsOptions"
           class="w-300px"
           id="selectedTime"
           name="selectedTime"
           placeholder="Select a time slot"
+          optionLabel="label"
+          optionValue="value"
           v-model="selectedTime"
           required
-          ><template #value="slotProps">
-            <div v-if="slotProps.value" class="flex">
-              <div>{{ slotProps.value.from }} - {{ slotProps.value.to }}</div>
-            </div>
-            <span v-else>
-              {{ slotProps.placeholder }}
-            </span>
-          </template>
-          <template #option="slotProps">
-            <div class="flex">
-              <div>{{ slotProps.option.from }} - {{ slotProps.option.to }}</div>
-            </div>
-          </template>
-        </Select>
+        />
+      </div>
+      <div class="pad-5 row">
+        <label class="pad-5" for="assignee">Assignee </label>
+        <!-- <div class="row"> -->
+        <Select
+          :options="availableAssigneeOptions"
+          class="w-300px"
+          id="assignee"
+          name="assignee"
+          placeholder="Select an assignee"
+          optionLabel="label"
+          optionValue="value"
+          v-model="selectedAssignee"
+          required
+        />
       </div>
     </FieldSet>
     <div class="row pad-10">
       <Button
-        label="Save"
         severity="contrast"
         icon="pi pi-save"
         iconPos="right"
+        text
         @click="updateReservation()"
       />
-      <Button label="Cancel" severity="secondary" />
+
+      <span class="row justify-center items-center">
+        <label for="is-done">Is Done</label>
+        <ToggleSwitch
+          id="is-done"
+          v-on:value-change="(ev) => markAsDone(ev)"
+          :defaultValue="item.reservation.status == 'done'"
+        />
+      </span>
       <Spacer fill="true" />
+      <Button
+        label="Cancel"
+        severity="danger"
+        text
+        @click="cancelReservation()"
+      />
       <Button
         label="Delete"
         severity="danger"

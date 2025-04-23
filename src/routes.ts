@@ -5,10 +5,12 @@ import LoginPage from "./pages/LoginPage.vue";
 import SignupPage from "./pages/SignupPage.vue";
 import CheckStatusPage from "./pages/CheckStatusPage.vue";
 import AccountPage from "./pages/staff/AccountPage.vue";
+import DeniedPage from "@pages/denied.vue"
 // import ReservationPage from "./pages/ReservationPage.vue";
 
 import ListReservationsPage from "./pages/staff/ListReservationsPage.vue";
 import ListPetsRecordsPage from "./pages/staff/ListPetsRecordsPage.vue";
+import { useUserStore } from "@stores/user";
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -27,16 +29,36 @@ const routes = [
     component: ListReservationsPage,
     name: "reservation",
   },
+  {
+    component:DeniedPage,
+    path:"/unauthorized",
+    name:"denied"
+  },
   // {
   //   path: "/staff/reservations/new",
   //   component: ReservationPage,
   //   name: "new_reservation",
   // },
   // { path: "/staff/:pathMatch(.*)*", redirect: "/staff/account" },
-  {path:"/:path(.*)*",redirect:"/"}
+  { path: "/:path(.*)*", redirect: "/" },
 ];
 
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+const protectedRoutes = ["/staff"];
+
+router.beforeEach((to) => {
+const userStore = useUserStore()
+  if (
+    protectedRoutes.some((protectedRoute) => {
+      return to.path.startsWith(protectedRoute);
+    })
+  ) {
+    if(!userStore.currentUser || userStore.currentUser.type !== "staff"){
+      return {name:"denied"}
+    }
+  }
 });

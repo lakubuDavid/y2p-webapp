@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Layout from "../../layouts/staff.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { usePetsStore } from "../../stores/pets";
 import ShowPetDialog from "../../components/dialog/ShowPetDialog.vue";
 import EditPetDialog from "../../components/dialog/EditPetDialog.vue";
 import { useToast } from "primevue/usetoast";
-import type { PetData } from "@lib/types";
 import type { UpdatePetParams } from "@lib/schemas";
+import type { PetData } from "../../models/pet";
 
 const toast = useToast();
 const store = usePetsStore();
@@ -14,6 +14,44 @@ const showNewPetDialog = ref(false);
 const showPetInfoDialog = ref(false);
 const showEditPetDialog = ref(false);
 const selectedPet = ref<PetData>();
+
+// Filter-related refs
+const selectedPetNames = ref<string[]>([]);
+const selectedOwnerNames = ref<string[]>([]);
+
+// Computed properties for filter options
+const petNameOptions = computed(() => {
+  console.log(store.pets);
+  // Get unique pet names
+  const uniqueNames = [...new Set(store.pets.map((pet) => pet.name))];
+  return uniqueNames.map((name) => ({ name: name, value: name }));
+});
+
+const ownerNameOptions = computed(() => {
+  // Get unique owner names
+  const uniqueOwners = [...new Set(store.pets.map((pet) => pet.owner.name))];
+  return uniqueOwners.map((name) => ({ name: name, value: name }));
+});
+
+// Filtered pets based on selected filters
+const filteredPets = computed(() => {
+  if (
+    selectedPetNames.value.length === 0 &&
+    selectedOwnerNames.value.length === 0
+  ) {
+    return store.pets; // Return all pets if no filters applied
+  }
+
+  return store.pets.filter((pet) => {
+    const matchesName =
+      selectedPetNames.value.length === 0 ||
+      selectedPetNames.value.includes(pet.name);
+    const matchesOwner =
+      selectedOwnerNames.value.length === 0 ||
+      selectedOwnerNames.value.includes(pet.owner.name);
+    return matchesName && matchesOwner;
+  });
+});
 
 const handleViewPet = (pet: PetData) => {
   selectedPet.value = pet;
@@ -27,7 +65,6 @@ const handleEditPet = (pet: PetData) => {
 
 const handleUpdatePet = async (values: UpdatePetParams) => {
   const petId = selectedPet.value?.id;
-  console.log("values", values);
   await store
     .update(petId!, values, (error: Error) => {
       toast.add({
@@ -48,6 +85,13 @@ const handleUpdatePet = async (values: UpdatePetParams) => {
       }
     });
 };
+
+// Clear all filters
+const clearFilters = () => {
+  selectedPetNames.value = [];
+  selectedOwnerNames.value = [];
+};
+store.refresh();
 </script>
 <template>
   <div class="__main">
@@ -62,6 +106,7 @@ const handleUpdatePet = async (values: UpdatePetParams) => {
               class="mr-2"
               severity="secondary"
               text
+              @click="() => (showNewPetDialog = true)"
             />
             <Button
               icon="pi pi-refresh"
@@ -72,19 +117,59 @@ const handleUpdatePet = async (values: UpdatePetParams) => {
             />
           </template>
         </Toolbar>
+
+        <!-- Filters Panel -->
+        <div class="filters-panel p-3 mb-3 surface-card border-round">
+          <div class="flex flex-column md:flex-row gap-3">
+            <div class="flex-1">
+              <label class="block mb-1 font-medium">Pet Names</label>
+              <MultiSelect
+                v-model="selectedPetNames"
+                :options="petNameOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Select Pet Names"
+                class="w-full"
+                display="chip"
+              />
+            </div>
+            <div class="flex-1">
+              <label class="block mb-1 font-medium">Owner Names</label>
+              <MultiSelect
+                v-model="selectedOwnerNames"
+                :options="ownerNameOptions"
+                optionLabel="name"
+                optionValue="value"
+                placeholder="Select Owner Names"
+                class="w-full"
+                display="chip"
+              />
+            </div>
+            <div class="flex align-items-end">
+              <Button
+                icon="pi pi-filter-slash"
+                label="Clear Filters"
+                severity="secondary"
+                text
+                @click="clearFilters"
+              />
+            </div>
+          </div>
+        </div>
+
         <div>
           <Dialog
             v-model:visible="showNewPetDialog"
             modal
             header="New Pet"
-            :style="{ width: '40rem' }"
+            :style="{ width: '60rem' }"
           >
           </Dialog>
           <Dialog
             v-model:visible="showPetInfoDialog"
             modal
             header="Pet Details"
-            :style="{ width: '40rem' }"
+            :style="{ width: '60rem' }"
           >
             <ShowPetDialog v-if="selectedPet" :item="selectedPet" />
           </Dialog>
@@ -93,16 +178,17 @@ const handleUpdatePet = async (values: UpdatePetParams) => {
             v-model:visible="showEditPetDialog"
             modal
             header="Edit Pet"
-            :style="{ width: '40rem' }"
+            :style="{ width: '60rem' }"
           >
             <EditPetDialog
               v-if="selectedPet"
               :item="selectedPet"
               :handleSubmit="handleUpdatePet"
+              :close="() => (showEditPetDialog = false)"
             />
           </Dialog>
           <DataView
-            :value="store.pets"
+            :value="filteredPets"
             data-key="id"
             paginator
             :rows="5"

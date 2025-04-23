@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { StaffUserData, UserData } from "../../lib/types";
+import type { StaffUserData, UserData } from "../models/user";
+
+import { capitalized } from "@lib/utils";
 
 const props = defineProps<{
   item: UserData | StaffUserData;
@@ -42,7 +44,8 @@ const handleEdit = () => {
             </div>
           </div>
           <div v-if="isStaffUser" class="row">
-            <strong>Role:</strong> {{ (item as StaffUserData).role }}
+            <strong>Role:</strong>
+            {{ capitalized((item as StaffUserData).role) }}
           </div>
         </div>
       </div>

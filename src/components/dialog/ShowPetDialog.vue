@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import type { PetData } from "../../../lib/types";
+import { computed, ref } from "vue";
+import type { PetData, PetInfo } from "../../models/pet";
+import { useVueToPrint } from "vue-to-print";
+import { usePetsStore } from "@stores/pets";
+import type { ReservationHistoryRow } from "../../models/reservation";
+import { toDate } from "@lib/types";
 
 const props = defineProps<{
   item: PetData;
@@ -13,13 +17,51 @@ const icon = computed(() => {
   return "paw";
 });
 
+const info = ref<PetInfo | undefined>();
+const history = ref<ReservationHistoryRow[]>([]);
+
+const store = usePetsStore();
+
+const fetchInfo = async () => {
+  info.value = await store.getById(props.item.id);
+  store.getHistory(props.item.id).then((arr) => {
+    history.value = arr ?? [];
+  });
+  console.log(info.value);
+};
+
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+const contentRef = ref();
+//@ts-ignore
+const { handlePrint } = useVueToPrint({
+  content: contentRef,
+  documentTitle: "AwesomeFileName",
+});
+
+fetchInfo();
 </script>
 
 <template>
-  <div class="column gap-4px">
+  <div class="column gap-4px h-max-900px" ref="contentRef">
+    <Fieldset legend="Owner Information">
+      <div class="row">
+        <strong class="w-150px">Name:</strong>
+        <span> {{ info?.owner.name }}</span>
+        <strong class="w-150px">Surname:</strong>
+        <span> {{ info?.owner.surname ?? "-" }}</span>
+      </div>
+      <div class="row">
+        <strong class="w-150px">Email :</strong>
+        <span> {{ info?.owner.email == "" ? "-" : info?.owner.email }}</span>
+      </div>
+      <div class="row">
+        <strong class="w-150px">PhoneNumber :</strong>
+        <span> {{ info?.owner.phoneNumber ?? "None" }}</span>
+      </div>
+    </Fieldset>
     <Fieldset legend="Pet Information">
       <div class="flex flex-col gap-2">
         <div class="row">
@@ -33,26 +75,13 @@ const capitalize = (str: string) => {
             <FaIcon :icon="`fa-${icon}`" />
           </span>
         </div>
-        <!-- <div class="row"> -->
-        <!-- <strong class="w-200px">Breed:</strong> -->
-        <!-- <span>{{ item.pet.breed || 'Not specified' }}</span> -->
-        <!-- </div> -->
-        <!-- <div class="row"> -->
-        <!-- <strong class="w-200px">Date of Birth:</strong> -->
-        <!-- <span>{{ item.pet.birthDate ? new Date(item.pet.birthDate).toLocaleDateString() : 'Not specified' }}</span> -->
-        <!-- </div> -->
-        <!-- <div class="row"> -->
-        <!-- <strong class="w-200px">Owner:</strong> -->
-        <!-- <span>{{ item.owner.name }} {{ item.owner.surname }}</span> -->
-        <!-- </div> -->
-        <!-- <div class="row"> -->
-        <!-- <strong class="w-200px">Registration Date:</strong> -->
-        <!-- <span>{{ new Date(item.createdAt).toLocaleDateString() }}</span> -->
-        <!-- </div> -->
       </div>
     </Fieldset>
 
-    <Fieldset legend="Additional Information" v-if="item.metadata">
+    <Fieldset
+      legend="Additional Information"
+      v-if="Object.keys(item.metadata).length > 0"
+    >
       <!-- <div class="flex flex-direction-column gap-2"> -->
       <!-- <div class="row"> -->
       <!-- <strong class="w-200px">Notes:</strong> -->
@@ -66,6 +95,34 @@ const capitalize = (str: string) => {
         <span>{{ value }}</span>
       </div>
     </Fieldset>
+    <Fieldset legend="History ">
+      <DataTable :value="history" row="5"
+        ><template #empty> No reservations found. </template>
+        <template #loading> Loading reservations data. Please wait. </template>
+        <Column field="reservationNumber" header="Number"></Column>
+        <Column field="date" sortable header="Date">
+          <template #body="slotProps">
+            <span
+              >{{ toDate(slotProps.data.date).toLocaleDateString("fr-Fr") }}
+            </span>
+          </template>
+        </Column>
+        <Column field="time" sortable header="Time">
+          <template #body="slotProps">
+            <span
+              >{{ slotProps.data.time.from }} -
+              {{ slotProps.data.time.to }}</span
+            >
+          </template>
+        </Column>
+        <Column field="status" sortable header="Status"></Column>
+      </DataTable>
+    </Fieldset>
+    <img src="/logo.png" class="w-100px" />
+  </div>
+  <div class="row">
+    <Spacer />
+    <Button icon="pi pi-print" @click="handlePrint()" text />
   </div>
 </template>
 

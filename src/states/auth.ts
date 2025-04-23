@@ -1,9 +1,10 @@
-import type { ApiResponse, User, UserCredentials } from "../../lib/types";
+import type { ApiResponse, } from "../../lib/types";
 import { useSessionStorage } from "@vueuse/core";
 import { useCookies } from "@vueuse/integrations/useCookies.mjs";
 //
 
 import { useRouter } from "vue-router";
+import type { User, UserCredentials } from "../models/user";
 
 export const ACCESS_TOKEN_EXPIRY = 15 * 60 * 1000; // 15 minutes
 export const REFRESH_TOKEN_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days

@@ -37,6 +37,7 @@ export default defineConfig({
         "./src/components/**", // all nested modules
         "./src/layouts/**", // all nested modules
         "./src/pages/**", // all nested modules
+        "./src/models/**", // all nested modules
         // ...
       ],
     }),
@@ -49,6 +50,7 @@ export default defineConfig({
       '@stores': path.resolve(__dirname, "./src/stores"),
       '@components': path.resolve(__dirname, "./src/components"),
       '@lib': path.resolve(__dirname, "./lib"),
+      '@models': path.resolve(__dirname, "./models"),
     }
   }
 });

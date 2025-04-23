@@ -19,7 +19,7 @@ const userStore = useUserStore();
         </ul>
         <!-- </Panel> -->
       </div>
-      <div v-if="userStore.user" class="column w-200">
+      <div v-if="userStore.currentUser" class="column w-200">
         <!-- <Panel header="Staff"> -->
         <h3>Internal</h3>
         <ul>

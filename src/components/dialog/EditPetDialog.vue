@@ -1,35 +1,59 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import type { PetData } from "../../../lib/types";
+import type { PetData } from "../../models/pet";
 import type { UpdatePetParams } from "@lib/schemas";
 import MetadataEditor from "@components/MetadataEditor.vue";
 import { capitalized } from "@lib/utils";
+import { usePetsStore } from "@stores/pets";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps<{
   item: PetData;
   handleSubmit: (values: UpdatePetParams) => Promise<any>;
+  close: () => void;
 }>();
+
+const store = usePetsStore();
+const toast = useToast();
+const confirm = useConfirm();
 
 const form = ref({
   name: props.item.name || "",
   metadata: props.item.metadata || {},
-  //breed: props.item.breed || "",
-  //birthDate: props.item.birthDate || null,
-  //notes: props.item.notes || ""
 });
-
-//const species = ["dog", "cat", "bird", "other"];
 
 const onSubmit = async () => {
   const updateData: UpdatePetParams = {
     name: form.value.name,
     metadata: form.value.metadata,
-    //breed: petInfo.value.breed,
-    //birthDate: petInfo.value.birthDate,
-    //notes: petInfo.value.notes
   };
 
   await props.handleSubmit(updateData);
+};
+const deletePet = () => {
+  confirm.require({
+    modal: true,
+    message: "Do you want to delete this record?",
+    header: "Danger Zone",
+    icon: "pi pi-info-circle",
+    rejectLabel: "Cancel",
+    rejectProps: {
+      label: "Cancel",
+      severity: "secondary",
+      outlined: true,
+    },
+    acceptProps: {
+      label: "Delete",
+      severity: "danger",
+    },
+    accept: () => {
+      store.delete(props.item.id).then(() => {
+        toast.add({ severity: "success", summary: "Record deleted" });
+        props.close();
+      });
+    },
+  });
 };
 </script>
 
@@ -44,26 +68,9 @@ const onSubmit = async () => {
         <label for="specie">Species</label>
         {{ capitalized(item.specie) }}
       </div>
-      <!-- <div class="form-group"> -->
-      <!-- <label for="breed">Breed</label> -->
-      <!-- <InputText id="breed" v-model="petInfo.breed" class="w-full" /> -->
-      <!-- </div> -->
-      <!-- <div class="form-group"> -->
-      <!-- <label for="birthDate">Date of Birth</label> -->
-      <!-- <Calendar -->
-      <!-- id="birthDate" -->
-      <!-- v-model="petInfo.birthDate" -->
-      <!-- dateFormat="yy-mm-dd" -->
-      <!-- class="w-full" -->
-      <!-- /> -->
-      <!-- </div> -->
     </Fieldset>
 
     <Fieldset legend="Medical Information">
-      <!-- <div class="form-group"> -->
-      <!-- <label for="notes">Medical Notes</label> -->
-      <!-- <Textarea id="notes" v-model="petInfo.notes" rows="4" class="w-full" /> -->
-      <!-- </div> -->
       <MetadataEditor v-model="form.metadata" />
     </Fieldset>
 
@@ -79,6 +86,14 @@ const onSubmit = async () => {
         label="Cancel"
         icon="pi pi-times"
         severity="secondary"
+      />
+      <Spacer />
+      <Button
+        type="button"
+        label="Delete"
+        icon="pi pi-trash"
+        severity="danger"
+        @click="deletePet"
       />
     </div>
   </Form>

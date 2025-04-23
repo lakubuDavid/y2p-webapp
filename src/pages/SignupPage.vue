@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import Layout from "../layouts/accessform.vue";
-import { useAuth } from "../states/auth";
+import { useAuthStore } from "@stores/auth";
 
 const form = defineModel("form", {
   default: { email: "", password: "", name: "", confirmPassword: "" },
 });
 const router = useRouter();
+const store = useAuthStore();
 const submit = async (ev: Event) => {
   ev.preventDefault();
   if (form.value.password != form.value.confirmPassword) {
@@ -20,7 +21,7 @@ const submit = async (ev: Event) => {
   ) {
     alert("Fill in all fields");
   }
-  const response = await useAuth().signUp(
+  const response = await store.signUp(
     form.value.name,
     form.value.email,
     form.value.password,

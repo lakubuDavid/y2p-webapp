@@ -1,6 +1,7 @@
 import { useToast } from "primevue/usetoast";
-import type { User, UserCredentials } from "./types";
 import { create } from "apisauce";
+import { capitalize } from "vue";
+import type { User, UserCredentials } from "../src/models/user";
 
 const API_URL = import.meta.env.VITE_API_URL;
 export const api = create({
@@ -21,11 +22,29 @@ api.addMonitor((response) => {
     console.log("500 error:", response);
   }
   if (!response.ok) {
-    toast.add({
-      severity: "error",
-      summary: "Api Client Error",
-      detail: response.originalError.message,
-    });
+    if (response.data) {
+      const error: Error & { code: string } = response.data;
+      const title = () => {
+        try {
+          const words = error.message.split("_");
+          words[1] = capitalize(words[1]);
+          return words.reduce((prev, curr) => `${prev} ${curr}`);
+        } catch (_) {
+          return "Error";
+        }
+      };
+      toast.add({
+        severity: "error",
+        summary: title(),
+        detail: error.message,
+      });
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Api Client Error",
+        detail: response.originalError.message,
+      });
+    }
   }
 });
 

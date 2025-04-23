@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { CreateUserParams } from "@lib/types";
 import { capitalized } from "@lib/utils";
 import { ref } from "vue";
+import type { CreateUserParams } from "../../models/user";
 
 defineProps<{
   handleSubmit: (data: CreateUserParams) => void | Promise<void>;

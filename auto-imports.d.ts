@@ -6,7 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const AdminCreateUserSchema: typeof import('./src/models/user')['AdminCreateUserSchema']
+  const CreateReservationSchema: typeof import('./src/models/reservation')['CreateReservationSchema']
+  const CreateUserSchema: typeof import('./src/models/user')['CreateUserSchema']
   const EffectScope: typeof import('vue')['EffectScope']
+  const ReservationDateSchema: typeof import('./src/models/reservation')['ReservationDateSchema']
+  const UserInfoSchema: typeof import('./src/models/user')['UserInfoSchema']
   const computed: typeof import('vue')['computed']
   const createApp: typeof import('vue')['createApp']
   const customRef: typeof import('vue')['customRef']
@@ -61,6 +66,7 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useLink: typeof import('vue-router')['useLink']
   const useModel: typeof import('vue')['useModel']
+  const usePrint: typeof import('./src/composables/print')['usePrint']
   const useRoute: typeof import('vue-router')['useRoute']
   const useRouter: typeof import('vue-router')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
@@ -76,6 +82,12 @@ declare global {
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { ReservationSlotType, ReservationSlotsType } from './src/components/ReservationSlots.vue'
-  import('./src/components/ReservationSlots.vue')
+  export type { PetData, PetInfo, PetRecord } from './src/models/pet'
+  import('./src/models/pet')
+  // @ts-ignore
+  export type { ReservationSlotType, ReservationSlotsType, Reservation, ReservationHistoryRow, ReservationDate, ReservationRecord, ReservationResponse, CreateReservationParams } from './src/models/reservation'
+  import('./src/models/reservation')
+  // @ts-ignore
+  export type { UserTypes, UserRoles, User, UserCredentials, UserData, StaffUserData, CreateUserParams, AdminCreateUserParams } from './src/models/user'
+  import('./src/models/user')
 }

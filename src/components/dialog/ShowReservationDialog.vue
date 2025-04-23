@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { type ReservationRecord, toDate } from "../../../lib/types";
+import { toDate } from "../../../lib/types";
+import type { ReservationRecord } from "../../models/reservation";
 
 const props = defineProps<{
   item: ReservationRecord;
@@ -60,6 +61,12 @@ const icon = computed(() => {
       </div>
       <FaIcon :icon="`fa-${icon}`" />
     </FieldSet>
+    <Fieldset legend="Reservation Info">
+      <div class="row pad-5" v-if="item.assignee">
+        <strong>Assignee</strong>
+        <span> {{ `${item.assignee?.name} ${item.assignee?.surname} ` }} </span>
+      </div>
+    </Fieldset>
   </div>
   <!-- <Button -->
   <!-- type="button" -->

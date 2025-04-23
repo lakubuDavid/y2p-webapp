@@ -1,17 +1,16 @@
 import { defineStore } from "pinia";
 import type {
   ApiResponse,
-  CreateUserParams,
-  StaffUserData,
-  UserData,
 } from "../../lib/types";
 import { ref } from "vue";
 import { api } from "../../lib/client";
-import { useAuth } from "../states/auth";
 import { useToast } from "primevue/usetoast";
+import type { CreateUserParams, StaffUserData, UserData } from "../models/user";
+import { useAuthStore } from "./auth";
 
 export const useAccountsStore = defineStore("accounts", () => {
-  const auth = useAuth();
+
+  const auth = useAuthStore();
   const toast = useToast()
 
   const MAX_TRIES = 3;
@@ -21,7 +20,6 @@ export const useAccountsStore = defineStore("accounts", () => {
     try {
       const { data, ok, status } = await api.get("/user", {
         withCredentials: true,
-        headers: { ...auth.getAuthHeader() },
       });
       if (ok) {
         const { data: rData, error: err } = data as ApiResponse<UserData[]>;
