@@ -28,6 +28,7 @@ const signOutClick = async () => {
   if (!store.error) {
     router.go(0);
   }
+  router.push("/home");
 };
 const loginClick = async () => {
   await router.push("/login");

@@ -37,9 +37,16 @@ const fetchUserReservations = async () => {
         );
       } else {
         // For clients, show their own reservations
-        userReservations.value = reservations.value.filter(
-          (record) => record.reservation.userId === currentUser.value?.id,
-        );
+        userReservations.value = reservations.value.filter((record) => {
+          const r = record.user.id === currentUser.value?.id;
+          console.log(
+            record.reservation,
+            record.user.id,
+            currentUser.value?.id,
+            r,
+          );
+          return r;
+        });
       }
     }
   } catch (error) {

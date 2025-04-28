@@ -42,6 +42,7 @@ const menuItems: MenuItem[] = [
     label: "Signout",
     command: () => {
       signout();
+      router.push("/home");
     },
   },
 ];
