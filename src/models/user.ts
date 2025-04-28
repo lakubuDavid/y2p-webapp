@@ -25,6 +25,7 @@ export type UserData = {
 
 export type StaffUserData = UserData & {
   role: UserRoles;
+  staffId:number;
 };
 
 export const UserInfoSchema = z

@@ -75,10 +75,9 @@ const assigneesOptions = computed(() => {
       console.log(staff);
       return {
         label: `${staff.user?.name} (${staff.user?.email})`,
-        value: staff.userId,
+        value: staff.id,
       };
     }),
-    { label: "Unassigned", value: undefined },
   ];
 });
 

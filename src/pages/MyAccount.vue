@@ -7,6 +7,7 @@ import type { ReservationRecord } from "../models/reservation";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "../stores/user";
 import { useReservationsStore } from "../stores/reservations";
+import type { StaffUserData } from "../models/user";
 
 const userStore = useUserStore();
 const reservationsStore = useReservationsStore();
@@ -29,9 +30,10 @@ const fetchUserReservations = async () => {
 
     if (reservations.value) {
       if (isStaff.value) {
+        const user = currentUser.value as StaffUserData;
         // For staff, show assigned reservations
         userReservations.value = reservations.value.filter(
-          (record) => record.reservation.assigneeId === currentUser.value?.id,
+          (record) => record.reservation.assigneeId === user.staffId,
         );
       } else {
         // For clients, show their own reservations
