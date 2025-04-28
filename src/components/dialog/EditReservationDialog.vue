@@ -38,7 +38,7 @@ const availableAssigneeOptions = computed(() => {
     .map((v) => {
       return {
         label: `${v.user?.name} (${v.user?.email})`,
-        value: v.userId,
+        value: v.id,
       };
     });
 });
