@@ -5,8 +5,8 @@ import LoginPage from "./pages/LoginPage.vue";
 import SignupPage from "./pages/SignupPage.vue";
 import CheckStatusPage from "./pages/CheckStatusPage.vue";
 import AccountPage from "./pages/staff/AccountPage.vue";
-import DeniedPage from "@pages/denied.vue";
-import MyAccount from "@pages/MyAccount.vue";
+import DeniedPage from "./pages/denied.vue";
+import MyAccount from "./pages/MyAccount.vue";
 // import ReservationPage from "./pages/ReservationPage.vue";
 
 import ListReservationsPage from "./pages/staff/ListReservationsPage.vue";
