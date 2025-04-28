@@ -3,11 +3,11 @@ import { api } from "../../lib/client";
 import type { ApiResponse } from "../../lib/types";
 // import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
-import type { UserData } from "../models/user";
+import type { StaffUserData, UserData } from "../models/user";
 
 export const useUserStore = defineStore("user", () => {
   // const toast = useToast();
-  const currentUser = ref<UserData>();
+  const currentUser = ref<UserData | StaffUserData>();
   const error = ref<Error>();
 
   const fetchUser = async () => {
@@ -17,7 +17,7 @@ export const useUserStore = defineStore("user", () => {
       error.value = originalError;
       return;
     }
-    const { data: userData, error: _error } = data as ApiResponse<UserData>;
+    const { data: userData, error: _error } = data as ApiResponse<UserData | StaffUserData>;
     if (_error) {
       console.log(_error);
     }
@@ -33,7 +33,7 @@ export const useUserStore = defineStore("user", () => {
       error.value = originalError;
       return;
     }
-    const { data: userData, error: _error } = data as ApiResponse<UserData>;
+    const { data: userData, error: _error } = data as ApiResponse<UserData | StaffUserData>;
     if (_error) {
       console.log(_error);
     }
@@ -48,7 +48,7 @@ export const useUserStore = defineStore("user", () => {
       error.value = originalError;
       return;
     }
-    const { data: userData, error: _error } = data as ApiResponse<UserData>;
+    const { data: userData, error: _error } = data as ApiResponse<UserData |StaffUserData>;
     if (_error) {
       console.log(_error);
     }
@@ -63,7 +63,7 @@ export const useUserStore = defineStore("user", () => {
       error.value = originalError;
       return;
     }
-    const { error: _error } = data as ApiResponse<UserData>;
+    const { error: _error } = data as ApiResponse<UserData | StaffUserData>;
     if (_error) {
       console.log(_error);
     }

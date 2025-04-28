@@ -1,16 +1,19 @@
 import { api } from "../../lib/client";
-import type { ApiResponse  } from "../../lib/types";
+import type { ApiResponse } from "../../lib/types";
 import type { UpdatePetParams } from "@lib/schemas";
 import { defineStore } from "pinia";
 import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
-import type { PetInfo, PetRecord } from "../models/pet";
+import type { PetData, PetInfo, PetRecord } from "../models/pet";
 import type { ReservationHistoryRow } from "../models/reservation";
+
 
 export const usePetsStore = defineStore("pets", () => {
   const toast = useToast();
 
   const pets = ref<PetRecord[]>([]);
+
+  const loading = ref(false);
   const error = ref<Error>();
 
   const fetchPets = async () => {
@@ -58,7 +61,7 @@ export const usePetsStore = defineStore("pets", () => {
       });
     }
     error.value = _error;
-    console.log(data)
+    console.log(data);
     return pet;
   };
 
@@ -119,8 +122,8 @@ export const usePetsStore = defineStore("pets", () => {
     return pet;
   };
 
-const getHistory = async (id:number)=>{
-      const { ok, data, originalError } = await api.get(`/pet/${id}/history`);
+  const getHistory = async (id: number) => {
+    const { ok, data, originalError } = await api.get(`/pet/${id}/history`);
     if (!ok) {
       toast.add({
         severity: "error",
@@ -130,7 +133,9 @@ const getHistory = async (id:number)=>{
       error.value = originalError;
       return;
     }
-    const { data: pet, error: _error } = data as ApiResponse<ReservationHistoryRow[]>;
+    const { data: pet, error: _error } = data as ApiResponse<
+      ReservationHistoryRow[]
+    >;
     if (_error) {
       toast.add({
         severity: "error",
@@ -139,9 +144,39 @@ const getHistory = async (id:number)=>{
       });
     }
     error.value = _error;
-    console.log(data)
+    console.log(data);
     return pet;
-}
+  };
+  const create = async (petData: {
+    name: string;
+    specie: string;
+    ownerId: number;
+    metadata?: Record<string, any>;
+  }): Promise<PetData | undefined> => {
+    loading.value = true;
+    error.value = undefined;
+
+    try {
+      const response = await api.post("/pet", petData);
+
+      if (response.ok && response.data) {
+        const newPet = (response.data as ApiResponse<PetData>).data ;
+
+        // Add the new pet to the store
+        fetchPets()
+
+        return newPet;
+      } else {
+        throw new Error((response.data as any)?.error || "Failed to create pet");
+      }
+    } catch (err) {
+      console.error("Error creating pet:", err);
+      error.value = err instanceof Error ? err : new Error(String(err));
+      return undefined;
+    } finally {
+      loading.value = false;
+    }
+  };
   fetchPets();
 
   return {
@@ -152,5 +187,6 @@ const getHistory = async (id:number)=>{
     getHistory,
     update: updatePetInfo,
     delete: deletePet,
+    create
   };
 });

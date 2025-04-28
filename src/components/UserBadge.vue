@@ -3,7 +3,6 @@ import { ref } from "vue";
 import Dropdown from "./Dropdown.vue";
 import DropdownItem from "./DropdownItem.vue";
 import { useRouter } from "vue-router";
-import { useCookies } from "@vueuse/integrations/useCookies";
 import { useUserStore } from "../stores/user";
 import { storeToRefs } from "pinia";
 
@@ -21,9 +20,7 @@ const toggleDropdown = () => {
   showDropdown.value = !showDropdown.value;
 };
 const myAccountClick = () => {
-  const cookies = useCookies(["__token", "__refresh_token"]);
-  console.log(cookies.get("__token"));
-  console.log(cookies.get("__refresh_token"));
+  router.push("/account");
 };
 const signOutClick = async () => {
   await store.signout();

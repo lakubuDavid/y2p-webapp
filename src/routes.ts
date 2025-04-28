@@ -5,7 +5,8 @@ import LoginPage from "./pages/LoginPage.vue";
 import SignupPage from "./pages/SignupPage.vue";
 import CheckStatusPage from "./pages/CheckStatusPage.vue";
 import AccountPage from "./pages/staff/AccountPage.vue";
-import DeniedPage from "@pages/denied.vue"
+import DeniedPage from "@pages/denied.vue";
+import MyAccount from "@pages/MyAccount.vue";
 // import ReservationPage from "./pages/ReservationPage.vue";
 
 import ListReservationsPage from "./pages/staff/ListReservationsPage.vue";
@@ -17,6 +18,7 @@ const routes = [
   { path: "/home", component: HomePage, name: "home" },
   { path: "/login", component: LoginPage, name: "login" },
   { path: "/signup", component: SignupPage, name: "signup" },
+  { path: "/account", component: MyAccount, name: "my_account" },
   {
     path: "/check_reservation",
     component: CheckStatusPage,
@@ -30,9 +32,9 @@ const routes = [
     name: "reservation",
   },
   {
-    component:DeniedPage,
-    path:"/unauthorized",
-    name:"denied"
+    component: DeniedPage,
+    path: "/unauthorized",
+    name: "denied",
   },
   // {
   //   path: "/staff/reservations/new",
@@ -50,15 +52,19 @@ export const router = createRouter({
 
 const protectedRoutes = ["/staff"];
 
-router.beforeEach((to) => {
-const userStore = useUserStore()
+router.beforeEach(async (to) => {
+  const userStore = useUserStore();
+  await userStore.refresh();
+  if (to.path == "/account" && !userStore.currentUser) {
+    return { name: "denied" };
+  }
   if (
     protectedRoutes.some((protectedRoute) => {
       return to.path.startsWith(protectedRoute);
     })
   ) {
-    if(!userStore.currentUser || userStore.currentUser.type !== "staff"){
-      return {name:"denied"}
+    if (!userStore.currentUser || userStore.currentUser.type !== "staff") {
+      return { name: "denied" };
     }
   }
 });

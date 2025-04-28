@@ -164,6 +164,7 @@ store.refresh();
             header="New Pet"
             :style="{ width: '60rem' }"
           >
+            <NewPetDialog />
           </Dialog>
           <Dialog
             v-model:visible="showPetInfoDialog"

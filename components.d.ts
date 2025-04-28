@@ -41,6 +41,7 @@ declare module 'vue' {
     NewReservatioDialog: typeof import('./src/components/dialog/NewReservatioDialog.vue')['default']
     NewUserDialog: typeof import('./src/components/dialog/NewUserDialog.vue')['default']
     PrintPageComponent: typeof import('./src/components/PrintPageComponent.vue')['default']
+    ProgressSpinner: typeof import('primevue/progressspinner')['default']
     ReservationListItem: typeof import('./src/components/ReservationListItem.vue')['default']
     ReservationSlots: typeof import('./src/components/ReservationSlots.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -31,7 +31,13 @@ const menuItems: MenuItem[] = [
     },
   },
   { separator: true },
-  { label: "My Account" },
+  {
+    label: "My Account",
+
+    command: () => {
+      router.push("/account");
+    },
+  },
   {
     label: "Signout",
     command: () => {
